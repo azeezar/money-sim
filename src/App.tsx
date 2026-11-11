@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Logo } from './components/Logo';
-import { Mascot } from './components/Mascot';
+import { Mascot, MascotIcon } from './components/Mascot';
 import { Quests } from './components/Quests';
 import { Toasts } from './components/Toasts';
 import { XpBar } from './components/XpBar';
@@ -172,7 +172,7 @@ export default function App() {
           {brand(36)}
           {nav.map((n) => (
             <button key={n.v} className={`sidelink n-${n.v}` + (view === n.v ? ' on' : '')} onClick={() => go(n.v)} aria-current={view === n.v ? 'page' : undefined}>
-              {n.v === 'mascot' ? <Mascot id={s.mascot} size={26} still /> : <Icon name={n.icon} />}
+              {n.v === 'mascot' ? <MascotIcon id={s.mascot} /> : <Icon name={n.icon} />}
               {n.label}
               {locked(n.v) && <Icon name="lock" size={14} />}
             </button>
@@ -249,7 +249,7 @@ export default function App() {
       <nav className="tabs" aria-label="Sections">
         {nav.map((n) => (
           <button key={n.v} className={`tab n-${n.v}` + (view === n.v ? ' on' : '')} onClick={() => go(n.v)} aria-current={view === n.v ? 'page' : undefined}>
-            {n.v === 'mascot' ? <Mascot id={s.mascot} size={26} still /> : <Icon name={n.icon} />}
+            {n.v === 'mascot' ? <MascotIcon id={s.mascot} /> : <Icon name={n.icon} />}
             {n.label}
           </button>
         ))}

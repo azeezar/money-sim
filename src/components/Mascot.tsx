@@ -115,6 +115,13 @@ export function Mascot({ id, size = 56, look, trick, still }: { id: MascotId; si
   );
 }
 
+/** A plain single-layer mascot that sizes like an Icon, for the tab bar. */
+export const MascotIcon = ({ id }: { id: MascotId }) => (
+  <svg viewBox="0 0 64 64" aria-hidden="true">
+    {ART[id]}
+  </svg>
+);
+
 /** The mascot's display name: the user's nickname, or its own name. */
 export const buddyName = (id: MascotId, nick: string): string => nick.trim() || MASCOTS.find((m) => m.id === id)!.name;
 
