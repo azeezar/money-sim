@@ -1,14 +1,5 @@
 import { gbp } from '../../lib/format';
-import { Arcade, disc, pick, pill, rand, rr, text, type ArcadeProps, type Game, type World } from './engine';
-
-/** Steering for games with a paddle or player on the bottom row: pointer, or arrow keys. */
-function steer(w: World, px: number, half: number, dt: number, speed = 380): number {
-  const { input } = w;
-  if (input.keys.ArrowLeft) px -= speed * dt;
-  else if (input.keys.ArrowRight) px += speed * dt;
-  else if (input.seen) px += (input.x - px) * Math.min(1, dt * 14);
-  return Math.max(half, Math.min(w.W - half, px));
-}
+import { Arcade, disc, pick, pill, rand, rr, steer, text, type ArcadeProps, type Game, type World } from './engine';
 
 /* ---------------------------------------------------------------- 1.1 Leak Dodger */
 

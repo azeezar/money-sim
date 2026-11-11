@@ -117,6 +117,15 @@ export function text(x: CanvasRenderingContext2D, s: string, cx: number, cy: num
   x.fillText(s, cx, cy);
 }
 
+/** Steering for games with a paddle or player on the bottom row: pointer, or arrow keys. */
+export function steer(w: World, px: number, half: number, dt: number, speed = 380): number {
+  const { input } = w;
+  if (input.keys.ArrowLeft) px -= speed * dt;
+  else if (input.keys.ArrowRight) px += speed * dt;
+  else if (input.seen) px += (input.x - px) * Math.min(1, dt * 14);
+  return Math.max(half, Math.min(w.W - half, px));
+}
+
 export const pick = <T,>(a: readonly T[]): T => a[Math.floor(Math.random() * a.length)];
 export const rand = (lo: number, hi: number) => lo + Math.random() * (hi - lo);
 

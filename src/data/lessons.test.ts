@@ -57,6 +57,11 @@ describe('lesson content', () => {
       }
     }
   });
+
+  it('has every Intermediate arcade game built', async () => {
+    const { ARCADE } = await import('../games/arcade');
+    for (const l of LESSONS.intermediate) expect(ARCADE[l.arcade!.id], l.arcade!.id).toBeTruthy();
+  });
 });
 
 describe('my plan tier', () => {
@@ -128,5 +133,10 @@ describe('curriculum', () => {
       expect(MECHS[l.mech!.id], l.mech!.id).toBeTruthy();
       expect(ARCADE[l.arcade!.id], l.arcade!.id).toBeTruthy();
     }
+  });
+
+  it('has every Intermediate arcade game built', async () => {
+    const { ARCADE } = await import('../games/arcade');
+    for (const l of LESSONS.intermediate) expect(ARCADE[l.arcade!.id], l.arcade!.id).toBeTruthy();
   });
 });
