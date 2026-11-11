@@ -1,6 +1,9 @@
 import type { MarketMode } from '../lib/market';
 
 export type MascotId = 'cat' | 'fox' | 'frog' | 'panda' | 'penguin' | 'robot';
+export type Slot = 'color' | 'hat' | 'eyes' | 'neck';
+/** Chosen item id per wardrobe slot, plus an optional nickname for the mascot. */
+export type Look = Record<Slot, string> & { nick: string };
 export type ProfileId = 'safety' | 'steady' | 'explorer';
 /**
  * A minigame's id: an arcade game id from the curriculum (e.g. 'leak-dodger'), 'risk' for Risk Lab,
@@ -104,6 +107,10 @@ export interface State {
   tradeMode: MarketMode;
   /** Books from the reading list marked as read. */
   reading: Record<string, true>;
+  /** Recommended reading folded away on the Learn tab. */
+  readingHidden: boolean;
+  /** How the mascot is dressed. Items unlock with lifetime XP (see components/wardrobe). */
+  look: Look;
   /** Symbols in the trading watchlist. */
   watchlist: string[];
   /** Unlock pop-ups already shown, by id. */

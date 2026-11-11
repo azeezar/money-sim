@@ -14,6 +14,7 @@ import { Learn } from './screens/Learn';
 import { LessonScreen } from './screens/Lesson';
 import { AgeGate, Onboarding } from './screens/Onboarding';
 import { Portfolio } from './screens/Portfolio';
+import { MyMascot } from './screens/MyMascot';
 import { Pot } from './screens/Pot';
 import { Profile } from './screens/Profile';
 import { Trade } from './screens/Trade';
@@ -24,14 +25,15 @@ import { Icon, type IconName } from './ui/Icon';
 import { ThemeToggle } from './ui/theme';
 import { toast } from './ui/toast';
 
-const VIEWS = ['learn', 'pot', 'portfolio', 'trade', 'games', 'profile', 'admin'] as const;
+const VIEWS = ['learn', 'pot', 'portfolio', 'trade', 'games', 'mascot', 'profile', 'admin'] as const;
 type View = (typeof VIEWS)[number];
 const NAV: { v: View; label: string; icon: IconName }[] = [
   { v: 'learn', label: 'Learn', icon: 'learn' },
-  { v: 'pot', label: 'My pot', icon: 'goal' },
+  { v: 'pot', label: 'My budget', icon: 'goal' },
   { v: 'portfolio', label: 'Portfolio', icon: 'pie' },
   { v: 'trade', label: 'Trade', icon: 'candles' },
   { v: 'games', label: 'Games', icon: 'games' },
+  { v: 'mascot', label: 'Mascot', icon: 'user' },
   { v: 'profile', label: 'Profile', icon: 'user' },
   ...(ADMIN ? [{ v: 'admin' as View, label: 'Admin', icon: 'gear' as IconName }] : []),
 ];
@@ -170,7 +172,7 @@ export default function App() {
           {brand(36)}
           {nav.map((n) => (
             <button key={n.v} className={`sidelink n-${n.v}` + (view === n.v ? ' on' : '')} onClick={() => go(n.v)} aria-current={view === n.v ? 'page' : undefined}>
-              <Icon name={n.icon} />
+              {n.v === 'mascot' ? <Mascot id={s.mascot} size={26} still /> : <Icon name={n.icon} />}
               {n.label}
               {locked(n.v) && <Icon name="lock" size={14} />}
             </button>
@@ -207,6 +209,7 @@ export default function App() {
             <div className="view">
               {view === 'learn' && <Learn openLesson={setLesson} />}
               {view === 'pot' && <Pot onGames={() => go('games')} />}
+              {view === 'mascot' && <MyMascot />}
               {view === 'portfolio' && <Portfolio />}
               {view === 'trade' && isAdult(s) && <Trade onLearn={() => go('learn')} />}
               {view === 'games' && <Games />}
@@ -246,7 +249,7 @@ export default function App() {
       <nav className="tabs" aria-label="Sections">
         {nav.map((n) => (
           <button key={n.v} className={`tab n-${n.v}` + (view === n.v ? ' on' : '')} onClick={() => go(n.v)} aria-current={view === n.v ? 'page' : undefined}>
-            <Icon name={n.icon} />
+            {n.v === 'mascot' ? <Mascot id={s.mascot} size={26} still /> : <Icon name={n.icon} />}
             {n.label}
           </button>
         ))}

@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
-import type { MascotId } from '../state/types';
+import { useStore } from '../state/store';
+import type { Look, MascotId } from '../state/types';
+import { ANCHOR, item } from './wardrobe';
 
 const OUT = '#2a2140';
 const LINE = { stroke: OUT, strokeWidth: 2.5, strokeLinejoin: 'round' as const, strokeLinecap: 'round' as const };
@@ -92,13 +94,29 @@ const ART: Record<MascotId, ReactNode> = {
   ),
 };
 
-export function Mascot({ id, size = 56 }: { id: MascotId; size?: number }) {
+/**
+ * A mascot in the user's chosen look (or `look` when given), with its own idle animation.
+ * `trick` plays its special move once; `still` stops the animation, e.g. for small previews.
+ */
+export function Mascot({ id, size = 56, look, trick, still }: { id: MascotId; size?: number; look?: Look; trick?: boolean; still?: boolean }) {
+  const s = useStore();
+  const lk = look ?? s.look;
+  const filter = item('color', lk.color)?.filter;
+  const extras = (['neck', 'eyes', 'hat'] as const).map((slot) => <g key={slot}>{item(slot, lk[slot])?.draw?.(ANCHOR[id])}</g>);
   return (
-    <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden="true" style={{ flex: 'none' }}>
-      {ART[id]}
-    </svg>
+    <span className={`mascot m-${id}` + (trick ? ' trick' : '') + (still ? ' still' : '')} style={{ width: size, height: size }} aria-hidden="true">
+      <svg width={size} height={size} viewBox="0 0 64 64" style={filter ? { filter } : undefined}>
+        {ART[id]}
+      </svg>
+      <svg width={size} height={size} viewBox="0 0 64 64">
+        {extras}
+      </svg>
+    </span>
   );
 }
+
+/** The mascot's display name: the user's nickname, or its own name. */
+export const buddyName = (id: MascotId, nick: string): string => nick.trim() || MASCOTS.find((m) => m.id === id)!.name;
 
 export function MascotPicker({ value, onChange }: { value: MascotId; onChange: (m: MascotId) => void }) {
   return (

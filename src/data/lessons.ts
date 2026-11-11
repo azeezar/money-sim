@@ -35,7 +35,7 @@ export const LESSONS: Record<TierId, Lesson[]> = {
     lesson('plan-0', 'Your goal in numbers', (c) =>
       c.remaining <= 0
         ? [
-            card(`You have reached ${gbp(c.target)}`, `Your virtual pot is at ${gbp(c.saved)}, past your target for ${c.goalName}. Raise the target on the My pot tab to keep the plan moving.`),
+            card(`You have reached ${gbp(c.target)}`, `Your virtual pot is at ${gbp(c.saved)}, past your target for ${c.goalName}. Raise the target on the My budget tab to keep the plan moving.`),
             mc('Your goal is reached. What is a sensible next move?', ['Set a new goal and keep the monthly habit', 'Spend it all at once', 'Borrow to reach the next goal', 'Stop saving for good'], 'A new target keeps the habit going, and the habit is what builds the pot.'),
             tf('Reaching a goal means the habit no longer matters.', false, 'The habit is what got you there. A new goal keeps it alive.'),
           ]
@@ -57,7 +57,7 @@ export const LESSONS: Record<TierId, Lesson[]> = {
       return [
         card('Your cushion', c.hasBudget
           ? `Your planned essentials come to about ${gbp(ex)} a month. Three to six months of that is ${gbp(three)} to ${gbp(six)}. That is the cushion to build before taking investment risk.`
-          : `Set up your budget on the My pot tab to see your own number. For now, picture essentials of ${gbp(ex)} a month. Three to six months of that is ${gbp(three)} to ${gbp(six)}.`),
+          : `Set up your budget on the My budget tab to see your own number. For now, picture essentials of ${gbp(ex)} a month. Three to six months of that is ${gbp(three)} to ${gbp(six)}.`),
         mc(`With essentials of ${gbp(ex)} a month, how much is three months of cover?`, numOpts(three, gbp, [ex, six, ex * 12, three + ex]), `${gbp(ex)} × 3 = ${gbp(three)}.`),
         mc(`Saving ${gbp(c.monthly)} a month, about how long to build ${gbp(three)} from nothing?`, numOpts(mths, monthsFmt, monthCands(mths)), `${gbp(three)} divided by ${gbp(c.monthly)} is about ${mths}, rounded up.`),
         match([['Emergency fund', 'Cash set aside for surprises'], ['Essentials', 'Bills you must pay'], ['Wants', 'Nice-to-have spending'], ['Savings target', 'What you aim to keep each month']]),

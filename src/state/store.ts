@@ -54,6 +54,8 @@ export function defaultState(): State {
     tradingUk: freshAccount(TRADING_START_CASH, 'uk'),
     tradeMode: '24h',
     reading: {},
+    readingHidden: false,
+    look: { color: 'classic', hat: 'none', eyes: 'none', neck: 'none', nick: '' },
     watchlist: DEFAULT_WATCHLIST.slice(),
     seen: {},
   };
@@ -95,6 +97,7 @@ export function hydrate(p: Partial<State>): State {
     trading: { ...base.trading, ...p.trading },
     tradingUk: { ...base.tradingUk, ...p.tradingUk, mode: 'uk' },
     reading: { ...p.reading },
+    look: { ...base.look, ...p.look },
     seen: { ...p.seen },
     watchlist: p.watchlist?.length ? p.watchlist : base.watchlist,
   } as State;

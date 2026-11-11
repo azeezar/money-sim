@@ -21,7 +21,8 @@ import { profileFor } from '../data/profiles';
 import { toast } from '../ui/toast';
 import { addXP, touchDay } from './helpers';
 import { freshAccount, freshGame, getState, update } from './store';
-import type { Fill, GameId, MascotId, MonthRecord, Quiz, State } from './types';
+import type { Fill, GameId, MascotId, MonthRecord, Quiz, Slot, State } from './types';
+import { isOpen, item } from '../components/wardrobe';
 
 /* ------------------------------------------------------------ onboarding */
 
@@ -347,6 +348,20 @@ export function toggleRead(id: string): void {
     else s.reading[id] = true;
   });
 }
+
+export const toggleReadingHidden = (): void => update((s) => void (s.readingHidden = !s.readingHidden));
+
+/* ------------------------------------------------------------------ mascot */
+
+/** Wear an item. Refused when it does not exist or the user's XP has not unlocked it yet. */
+export function wear(slot: Slot, id: string): boolean {
+  const it = item(slot, id);
+  if (!it || !isOpen(it, getState().xp)) return false;
+  update((s) => void (s.look[slot] = id));
+  return true;
+}
+
+export const setNick = (nick: string): void => update((s) => void (s.look.nick = nick.slice(0, 16)));
 
 /* ------------------------------------------------------------------- admin */
 

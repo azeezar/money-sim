@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Mascot, MascotPicker, MASCOTS } from '../components/Mascot';
+import { Mascot, MASCOTS, buddyName } from '../components/Mascot';
 import { Quests } from '../components/Quests';
 import { XpBar } from '../components/XpBar';
 import { BADGES } from '../data/badges';
@@ -12,7 +12,6 @@ import { ALL_TIERS, TRADING_START_CASH } from '../lib/config';
 import { gbp } from '../lib/format';
 import { currentTier } from '../lib/progress';
 import { clockOf, valueOf } from '../lib/trading';
-import { setMascot } from '../state/actions';
 import { resetStore, useStore } from '../state/store';
 import { setTheme, useTheme } from '../ui/theme';
 import { useNow } from '../ui/useNow';
@@ -50,7 +49,7 @@ export function Profile({ onRetake, go }: { onRetake: () => void; go: (v: 'pot' 
             <span className="tag">{currentTier(s.xp).name} · {p.name}</span>
             <h1>{s.name || 'Your profile'}</h1>
             <span className="small">
-              with {buddy.name}, {buddy.tag.toLowerCase()}
+              with {buddyName(s.mascot, s.look.nick)}, {buddy.tag.toLowerCase()}
             </span>
           </div>
         </div>
@@ -97,7 +96,7 @@ export function Profile({ onRetake, go }: { onRetake: () => void; go: (v: 'pot' 
         <div className="row" style={{ justifyContent: 'space-between' }}>
           <h3>Budget goals</h3>
           <button className="chip" onClick={() => go('pot')}>
-            Open My pot ›
+            Open My budget ›
           </button>
         </div>
         {g.target > 0 ? (
@@ -200,11 +199,6 @@ export function Profile({ onRetake, go }: { onRetake: () => void; go: (v: 'pot' 
             ☾ Dark
           </button>
         </div>
-      </div>
-
-      <div className="card">
-        <h3>Your buddy</h3>
-        <MascotPicker value={s.mascot} onChange={setMascot} />
       </div>
 
       <div className="card">
