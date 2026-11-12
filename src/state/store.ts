@@ -4,6 +4,8 @@ import { MAX_HEARTS, PORTFOLIO_START_CASH, TRADING_START_CASH } from '../lib/con
 import { ADMIN } from '../lib/mode';
 import { findLesson } from '../data/lessons';
 import { settle } from './settle';
+import { ITEMS } from '../components/wardrobe';
+import { toast } from '../ui/toast';
 import type { MarketMode } from '../lib/market';
 import type { Account, GameState, State } from './types';
 
@@ -58,6 +60,7 @@ export function defaultState(): State {
     look: { color: 'classic', hat: 'none', eyes: 'none', neck: 'none', nick: '' },
     watchlist: DEFAULT_WATCHLIST.slice(),
     seen: {},
+    reminder: false,
   };
 }
 
@@ -145,6 +148,7 @@ export function update(fn: (s: State) => void): void {
   rollover(s);
   fn(s);
   settle(s);
+  for (const i of ITEMS) if (i.xp > state.xp && i.xp <= s.xp) toast(`Wardrobe unlock: ${i.name}! Dress up on the Mascot tab.`);
   commit(s);
 }
 
@@ -165,3 +169,23 @@ export function replaceState(next: Partial<State>): void {
 }
 
 export const useStore = (): State => useSyncExternalStore(subscribe, getState, getState);
+
+/** A copyable backup code holding the whole save. */
+export function exportSave(): string {
+  let bin = '';
+  for (const b of new TextEncoder().encode(JSON.stringify(state))) bin += String.fromCharCode(b); // no spread: big saves overflow the call stack
+  return 'MS1:' + btoa(bin);
+}
+
+/** Restores a backup code. Returns false, changing nothing, when the code is not a valid save. */
+export function importSave(code: string): boolean {
+  try {
+    const b64 = code.trim().replace(/^MS1:/, '');
+    const p = JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(b64), (c) => c.charCodeAt(0)))) as Partial<State>;
+    if (!p || p.v !== 2 || typeof p.onboarded !== 'boolean') return false;
+    replaceState(p);
+    return true;
+  } catch {
+    return false;
+  }
+}

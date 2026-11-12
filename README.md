@@ -88,7 +88,7 @@ Curriculum lessons live in `src/data/curriculum.ts` (`cur(number, title, minutes
 - **Market prices are simulated.** Every price is a deterministic function of symbol and time (layered noise), so it moves live without a server and orders can be checked for time the app was closed. Companies and tickers are invented. The trading simulator is long-only (no short selling).
 - **Check UK figures.** ISA allowance, dividend allowance, Personal Savings Allowance and FSCS details are written as of late 2026 and can change.
 - **XP can be farmed with virtual numbers.** The budget planner trusts what the user types. `ONE_REWARD_PER_CALENDAR_MONTH` in `config.ts` limits goal-hit XP to once per real calendar month; turn it on for anything real.
-- **No accounts or sync.** Data lives in one browser. Clearing site data erases it.
+- **No accounts or sync.** Data lives on one device. Backup codes (Profile, and the Welcome screen on a new device) move it by hand. Clearing site data or deleting the app erases it.
 - **Real money is out of scope.** Holding or moving real funds, or bank syncing (Plaid, TrueLayer), brings regulation, security and compliance work that should be planned separately.
 
 ## Next steps
@@ -107,4 +107,4 @@ npm run ios        # build the web app, copy it into ios/, open Xcode; press Run
 npm run ios:sync   # rebuild and copy without opening Xcode
 ```
 
-Run `ios:sync` after every web change. The app id is `com.moneysim.app` (in `capacitor.config.ts`). It still uses the default Capacitor icon.
+Run `ios:sync` after every web change. See `PRIVACY.md` and `docs/app-store.md` before submitting to the App Store. The app id is `com.moneysim.app` (in `capacitor.config.ts`). It still uses the default Capacitor icon.

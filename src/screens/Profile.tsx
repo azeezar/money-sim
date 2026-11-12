@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Mascot, MASCOTS, buddyName } from '../components/Mascot';
+import { Backup } from '../components/Backup';
 import { Quests } from '../components/Quests';
 import { XpBar } from '../components/XpBar';
 import { BADGES } from '../data/badges';
@@ -12,7 +13,8 @@ import { ALL_TIERS, TRADING_START_CASH } from '../lib/config';
 import { gbp } from '../lib/format';
 import { currentTier } from '../lib/progress';
 import { clockOf, valueOf } from '../lib/trading';
-import { resetStore, useStore } from '../state/store';
+import { native, setReminder } from '../lib/native';
+import { resetStore, update, useStore } from '../state/store';
 import { setTheme, useTheme } from '../ui/theme';
 import { useNow } from '../ui/useNow';
 
@@ -24,6 +26,7 @@ export function Profile({ onRetake, go }: { onRetake: () => void; go: (v: 'pot' 
   const now = useNow(5000);
   const theme = useTheme();
   const [confirm, setConfirm] = useState(false);
+  const [blocked, setBlocked] = useState(false);
   const buddy = MASCOTS.find((m) => m.id === s.mascot)!;
   const p = PROFILES[s.profile];
   const lessonCount = Object.values(LESSONS).reduce((n, l) => n + l.length, 0);
@@ -201,6 +204,26 @@ export function Profile({ onRetake, go }: { onRetake: () => void; go: (v: 'pot' 
         </div>
       </div>
 
+      {native && (
+        <div className="card">
+          <h3>Daily reminder</h3>
+          {/* shortcut: fires at 6pm even on days you already played; reschedule after each session if that annoys people */}
+          <p className="muted small">A nudge from {buddyName(s.mascot, s.look.nick)} at 6pm each day to keep your {s.streak}-day streak going.</p>
+          <button
+            className={'btn ' + (s.reminder ? 'ghost' : '')}
+            onClick={async () => {
+              const on = !s.reminder;
+              const ok = await setReminder(on, buddyName(s.mascot, s.look.nick));
+              setBlocked(on && !ok);
+              if (ok) update((d) => void (d.reminder = on));
+            }}
+          >
+            {s.reminder ? 'Turn reminder off' : 'Remind me at 6pm'}
+          </button>
+          {blocked && <p className="small" style={{ color: 'var(--bad)' }}>Notifications are blocked. Turn them on for Money Sim in the iPhone Settings app.</p>}
+        </div>
+      )}
+
       <div className="card">
         <span className="tag">Your investor profile</span>
         <h3>{p.name}</h3>
@@ -212,7 +235,8 @@ export function Profile({ onRetake, go }: { onRetake: () => void; go: (v: 'pot' 
 
       <div className="card">
         <h3>Your data</h3>
-        <p className="muted small">Progress is saved in this browser only. All money is virtual and nothing here is financial advice.</p>
+        <p className="muted small">Progress is saved on this device only. Copy a backup code to keep it safe or move it to a new phone. All money is virtual and nothing here is financial advice.</p>
+        <Backup />
         <button
           className={'btn ' + (confirm ? 'bad' : 'ghost')}
           onClick={() => {

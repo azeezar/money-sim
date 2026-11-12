@@ -113,6 +113,8 @@ export interface State {
   look: Look;
   /** Symbols in the trading watchlist. */
   watchlist: string[];
+  /** Daily 6pm reminder notification (iPhone app only). */
+  reminder: boolean;
   /** Unlock pop-ups already shown, by id. */
   seen: Record<string, true>;
 }

@@ -7,9 +7,9 @@ export interface MechProps {
   onDone: () => void;
 }
 
-const p2 = (n: number) => `£${n.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+export const p2 = (n: number) => `£${n.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
-function Range({ label, value, min, max, step, onChange, fmt }: { label: string; value: number; min: number; max: number; step: number; onChange: (n: number) => void; fmt: (n: number) => string }) {
+export function Range({ label, value, min, max, step, onChange, fmt }: { label: string; value: number; min: number; max: number; step: number; onChange: (n: number) => void; fmt: (n: number) => string }) {
   return (
     <label className="mx-range">
       <span className="row" style={{ justifyContent: 'space-between' }}>
@@ -31,7 +31,7 @@ function Range({ label, value, min, max, step, onChange, fmt }: { label: string;
   );
 }
 
-const Done = ({ children }: { children: React.ReactNode }) => (
+export const Done = ({ children }: { children: React.ReactNode }) => (
   <div className="fb good">
     <b>Done</b>
     <p>{children}</p>

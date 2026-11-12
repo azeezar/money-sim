@@ -73,3 +73,16 @@ export function race(debts: Debt[], budget: number, method: 'avalanche' | 'snowb
   }
   return { months, interest, firstClear };
 }
+
+/** Price of a bond paying `coupon` (a rate) on `face` yearly for `years`, when new bonds yield `rate`. */
+export function bondPrice(face: number, coupon: number, rate: number, years: number): number {
+  let pv = 0;
+  for (let t = 1; t <= years; t++) pv += (face * coupon) / Math.pow(1 + rate, t);
+  return pv + face / Math.pow(1 + rate, years);
+}
+
+/** Pot after `years` at `gross` growth, with a yearly fee `fee` taken from the balance. */
+export const afterFees = (p: number, gross: number, fee: number, years: number): number => p * Math.pow((1 + gross) * (1 - fee), years);
+
+/** Average price paid per unit when investing the same amount at each price. */
+export const avgCost = (prices: number[]): number => prices.length / prices.reduce((a, p) => a + 1 / p, 0);

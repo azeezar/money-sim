@@ -5,6 +5,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
 import './styles.css';
+import { buzz } from './lib/native';
 import { applyTheme } from './ui/theme';
 
 applyTheme();
@@ -17,6 +18,8 @@ if (Capacitor.isNativePlatform()) {
   sync();
   new MutationObserver(sync).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   requestAnimationFrame(() => void SplashScreen.hide());
+  // A light tap on every button press, like a native app.
+  document.addEventListener('click', (e) => (e.target as Element).closest?.('button:not(:disabled)') && buzz());
 }
 
 createRoot(document.getElementById('root')!).render(

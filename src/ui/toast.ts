@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from 'react';
+import { buzzWin } from '../lib/native';
 
 interface Toast {
   id: number;
@@ -11,6 +12,7 @@ const subs = new Set<() => void>();
 const emit = () => subs.forEach((f) => f());
 
 export function toast(msg: string): void {
+  buzzWin();
   const id = ++seq;
   items = [...items, { id, msg }];
   emit();

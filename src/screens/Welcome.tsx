@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Backup } from '../components/Backup';
 import { Logo } from '../components/Logo';
 import { resetStore, useStore } from '../state/store';
 
@@ -61,7 +62,8 @@ export function Welcome({ onEnter }: { onEnter: () => void }) {
           {step === 'none' && (
             <div className="fb bad">
               <b>No profile on this device yet</b>
-              <p>Your progress is saved on the device you use. Tap Start to set up your profile.</p>
+              <p>Your progress is saved on the device you use. Tap Start to set up your profile, or paste a backup code from your old device.</p>
+              <Backup onRestored={onEnter} />
               <button className="btn wide" onClick={onEnter}>
                 Start
               </button>

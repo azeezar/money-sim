@@ -3,6 +3,7 @@ import { Logo } from './components/Logo';
 import { Mascot, MascotIcon } from './components/Mascot';
 import { Quests } from './components/Quests';
 import { Toasts } from './components/Toasts';
+import { Tour } from './components/Tour';
 import { XpBar } from './components/XpBar';
 import { PROFILES } from './data/profiles';
 import { gbp } from './lib/format';
@@ -295,6 +296,7 @@ export default function App() {
           </div>
         </div>
       )}
+      {fresh.length === 0 && !s.seen.tour && <Tour mascot={s.mascot} go={(v) => go(v as View)} />}
       <Toasts />
     </>
   );

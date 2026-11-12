@@ -58,10 +58,6 @@ describe('lesson content', () => {
     }
   });
 
-  it('has every Intermediate arcade game built', async () => {
-    const { ARCADE } = await import('../games/arcade');
-    for (const l of LESSONS.intermediate) expect(ARCADE[l.arcade!.id], l.arcade!.id).toBeTruthy();
-  });
 });
 
 describe('my plan tier', () => {
@@ -126,17 +122,13 @@ describe('curriculum', () => {
     expect(ls.map((l) => l.num)).toContain('16.2');
   });
 
-  it('has every Novice mechanic and arcade game built', async () => {
+  it('has every Novice and Intermediate mechanic and arcade game built', async () => {
     const { MECHS } = await import('../mechs');
     const { ARCADE } = await import('../games/arcade');
-    for (const l of LESSONS.novice) {
+    for (const l of [...LESSONS.novice, ...LESSONS.intermediate]) {
       expect(MECHS[l.mech!.id], l.mech!.id).toBeTruthy();
       expect(ARCADE[l.arcade!.id], l.arcade!.id).toBeTruthy();
     }
   });
 
-  it('has every Intermediate arcade game built', async () => {
-    const { ARCADE } = await import('../games/arcade');
-    for (const l of LESSONS.intermediate) expect(ARCADE[l.arcade!.id], l.arcade!.id).toBeTruthy();
-  });
 });

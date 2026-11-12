@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { RACE_DEBTS } from './novice';
-import { grow, payoff, race, realValue } from './sims';
+import { afterFees, avgCost, bondPrice, grow, payoff, race, realValue } from './sims';
 
 describe('mechanic maths', () => {
   it('compounds and deflates', () => {
@@ -22,5 +22,21 @@ describe('mechanic maths', () => {
     expect(s.firstClear).toBeLessThan(a.firstClear);
     expect(a.months.at(-1)!.balances.every((b) => b === 0)).toBe(true);
     expect(s.months.at(-1)!.balances.every((b) => b === 0)).toBe(true);
+  });
+});
+
+describe('intermediate mechanic maths', () => {
+  it('bond prices move against rates', () => {
+    expect(bondPrice(1000, 0.04, 0.04, 10)).toBeCloseTo(1000, 6);
+    expect(bondPrice(1000, 0.04, 0.06, 10)).toBeLessThan(1000);
+    expect(bondPrice(1000, 0.04, 0.02, 10)).toBeGreaterThan(1000);
+  });
+  it('fees compound against you', () => {
+    expect(afterFees(10000, 0.06, 0, 30)).toBeCloseTo(grow(10000, 0.06, 30), 6);
+    expect(afterFees(10000, 0.06, 0.015, 30) / afterFees(10000, 0.06, 0.001, 30)).toBeLessThan(0.7);
+  });
+  it('a fixed amount buys at or below the average price', () => {
+    expect(avgCost([10, 10])).toBe(10);
+    expect(avgCost([5, 10, 15])).toBeLessThan(10);
   });
 });
