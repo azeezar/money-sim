@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { RACE_DEBTS } from './novice';
-import { afterFees, avgCost, bondPrice, grow, payoff, race, realValue } from './sims';
+import { afterFees, avgCost, bondPrice, drawdown, grow, mixStats, payoff, race, realValue } from './sims';
 
 describe('mechanic maths', () => {
   it('compounds and deflates', () => {
@@ -38,5 +38,20 @@ describe('intermediate mechanic maths', () => {
   it('a fixed amount buys at or below the average price', () => {
     expect(avgCost([10, 10])).toBe(10);
     expect(avgCost([5, 10, 15])).toBeLessThan(10);
+  });
+});
+
+describe('investor mechanic maths', () => {
+  it('a bad start drains a pot that the same returns reversed would not', async () => {
+    const { BEAR_FIRST } = await import('./investor');
+    const bear = drawdown(500000, 22000, 0.025, BEAR_FIRST);
+    const bull = drawdown(500000, 22000, 0.025, [...BEAR_FIRST].reverse());
+    expect(bull.at(-1)!).toBeGreaterThan(bear.at(-1)! + 200000);
+  });
+  it('mixing uncorrelated assets beats either alone on Sharpe', () => {
+    const corr = [[1, 0], [0, 1]];
+    const a = mixStats([1, 0], [0.07, 0.07], [0.15, 0.15], corr, 0.02).sharpe;
+    const ab = mixStats([0.5, 0.5], [0.07, 0.07], [0.15, 0.15], corr, 0.02).sharpe;
+    expect(ab).toBeGreaterThan(a);
   });
 });

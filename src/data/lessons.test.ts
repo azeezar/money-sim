@@ -122,10 +122,10 @@ describe('curriculum', () => {
     expect(ls.map((l) => l.num)).toContain('16.2');
   });
 
-  it('has every Novice and Intermediate mechanic and arcade game built', async () => {
+  it('has every lesson mechanic and arcade game built, in all four tiers', async () => {
     const { MECHS } = await import('../mechs');
     const { ARCADE } = await import('../games/arcade');
-    for (const l of [...LESSONS.novice, ...LESSONS.intermediate]) {
+    for (const l of [...LESSONS.novice, ...LESSONS.intermediate, ...LESSONS.advanced, ...LESSONS.investor]) {
       expect(MECHS[l.mech!.id], l.mech!.id).toBeTruthy();
       expect(ARCADE[l.arcade!.id], l.arcade!.id).toBeTruthy();
     }

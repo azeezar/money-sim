@@ -1,15 +1,21 @@
 import { describe, expect, it } from 'vitest';
 import type { Input, Palette } from './engine';
+import * as A from './advanced';
 import * as G from './intermediate';
+import * as I from './investor';
 
 const C = new Proxy({}, { get: () => '#888' }) as Palette;
 /** A canvas context that accepts every call, so draw() runs without a browser. */
 const ctx = new Proxy({}, { get: (_, k) => (k === 'measureText' ? () => ({ width: 40 }) : () => {}), set: () => true }) as unknown as CanvasRenderingContext2D;
 
-const makers = [G.shareSlicers, G.yieldSeesaw, G.basketBuilder, G.feeEater, G.mixMaster, G.taxMaze, G.dcaAutopilot, G.targetRebalancer];
+const makers = [
+  ...[G.shareSlicers, G.yieldSeesaw, G.basketBuilder, G.feeEater, G.mixMaster, G.taxMaze, G.dcaAutopilot, G.targetRebalancer],
+  ...[A.marginHero, A.cashflowPlumber, A.valuationMatchmaker, A.discountMachine, A.fedChair, A.recessionRider, A.mindOverMarket, A.dipBuyer],
+  ...[I.strikeZone, I.thetaCrunch, I.reitTycoon, I.leverageTightrope, I.unicornHunter, I.sharpeShooter, I.washSale, I.safeWithdrawal],
+];
 const KEYS = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', ' '];
 
-describe('intermediate arcade games', () => {
+describe('intermediate, advanced and investor arcade games', () => {
   for (const make of makers)
     it(`${make.name} runs to a result under random play`, () => {
       for (const pace of [0.8, 1.6]) {

@@ -30,8 +30,8 @@ npm run build:all    # both production builds
 - **Learn, a 32-lesson curriculum** in four tiers of four units (two lessons each, 7–10 minutes): Novice — Financial Foundations (income and leaks, 50/30/20, APY, emergency funds, APR, avalanche vs. snowball, inflation, first investing steps); Intermediate — Core Investor (shares, bonds, index funds, fees, allocation, tax wrappers, DCA, rebalancing); Advanced — Market Analyst (statements, free cash flow, multiples, DCF, central banks, yield curves, biases, crashes); Investor — Sophisticated Strategist (options, theta, cap rates, property leverage, private markets, correlation, tax-loss harvesting, decumulation). Tiers unlock by XP. **My plan** is separate, always open, and written from the user's own goal, budget and quiz answers.
 - **Mascot**: pick one of six mascots, each with its own idle animation and a trick when tapped. Rename it and dress it from a wardrobe of colours, hats, eyewear and neckwear that unlocks as lifetime XP grows (`src/components/wardrobe.tsx`).
 - **My budget**: savings goal plus a **budget planner**. Log spends by category, close the month, and the saving joins the pot. Hitting the monthly savings goal pays XP.
-- **Interactive mechanics**: each curriculum lesson has a hands-on activity between the teaching and the questions (e.g. Swipe-Sorter, Pie Slider, Dual-Race Simulator). Built so far: all 8 Novice ones. Lessons whose mechanic is not built yet skip that step.
-- **Minigames**: every lesson has its own arcade game, listed by tier and unit and opened by XP like the lessons (built so far: all 8 Novice and all 8 Intermediate ones; the rest show “Soon”). Each tier also has Term Match and Quick Quiz built from its lessons, and Intermediate keeps Risk Lab. Arcade games and Risk Lab level up with XP from the wallet (12% faster per level).
+- **Interactive mechanics**: each curriculum lesson has a hands-on activity between the teaching and the questions (e.g. Swipe-Sorter, Pie Slider, Dual-Race Simulator). All 32 are built.
+- **Minigames**: every lesson has its own arcade game, listed by tier and unit and opened by XP like the lessons (all 32 built; the Advanced and Investor games share three shapes in `games/arcade/kit.ts`: catch, pick-a-lane and keep-in-the-zone). Each tier also has Term Match and Quick Quiz built from its lessons, and Intermediate keeps Risk Lab. Arcade games and Risk Lab level up with XP from the wallet (12% faster per level).
 - **Date of birth**: asked at sign-up (and once for older saves); the app works out the age from it. Under 18: no Trade tab, arcade games open only once their lesson is finished and run at a gentler pace, and the review games have no timers and use only finished lessons. Change it in the admin build to preview either mode.
 - **Lessons** open with a "Learn first" page (every teaching card plus a key-terms list) before the questions.
 - **Unlock alerts**: crossing an XP threshold shows a toast straight away (even mid-lesson), then a pop-up saying the next tier is unlocked, plus the Portfolio and Trade once each, and what opens next.
@@ -71,7 +71,7 @@ src/
   state/     types, store (localStorage), actions, quest + badge settling
   data/      curriculum (32 lessons), lessons (helpers + My plan), badges, quests, quiz and profiles
   mechs/     interactive lesson mechanics and their maths (sims.ts)
-  games/     arcade/ (shared canvas engine + arcade games), Term Match, Quick Quiz, Risk Lab
+  games/     arcade/ (shared canvas engine, game shapes in kit.ts, one file of games per tier), Term Match, Quick Quiz, Risk Lab
   lib/       ...plus market (simulated prices), trading (order rules), indicators, mode (admin flag)
   screens/   Onboarding, Learn, Lesson, Pot (budget planner), Portfolio, Trade, Games, Profile, Admin
   components/ Mascot, XpBar, Quests, Toasts

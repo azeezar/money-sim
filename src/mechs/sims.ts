@@ -86,3 +86,24 @@ export const afterFees = (p: number, gross: number, fee: number, years: number):
 
 /** Average price paid per unit when investing the same amount at each price. */
 export const avgCost = (prices: number[]): number => prices.length / prices.reduce((a, p) => a + 1 / p, 0);
+
+/** Pot left each year when withdrawing `first` (raised by `inflation` yearly) before each year's return. Stops at 0. */
+export function drawdown(pot: number, first: number, inflation: number, rets: number[]): number[] {
+  const out = [pot];
+  let wd = first;
+  for (const r of rets) {
+    pot = Math.max(0, (pot - wd) * (1 + r));
+    wd *= 1 + inflation;
+    out.push(pot);
+  }
+  return out;
+}
+
+/** Return, volatility and Sharpe ratio of a mix, given each asset's return, volatility and pairwise correlations. */
+export function mixStats(w: number[], r: number[], v: number[], corr: number[][], rf: number): { ret: number; vol: number; sharpe: number } {
+  const ret = w.reduce((a, wi, i) => a + wi * r[i], 0);
+  let varc = 0;
+  for (let i = 0; i < w.length; i++) for (let j = 0; j < w.length; j++) varc += w[i] * w[j] * v[i] * v[j] * corr[i][j];
+  const vol = Math.sqrt(varc);
+  return { ret, vol, sharpe: (ret - rf) / vol };
+}
