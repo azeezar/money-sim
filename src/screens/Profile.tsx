@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Mascot, MASCOTS, buddyName } from '../components/Mascot';
 import { Backup } from '../components/Backup';
+import { setUiStyle, toggleBadgesHidden } from '../state/actions';
 import { Quests } from '../components/Quests';
 import { XpBar } from '../components/XpBar';
 import { BADGES } from '../data/badges';
@@ -8,7 +9,7 @@ import { BOOKS } from '../data/books';
 import { LESSONS } from '../data/lessons';
 import { PROFILES } from '../data/profiles';
 import { summarise } from '../lib/budget';
-import { canTrade, isAdult } from '../lib/access';
+import { canTrade, classicLook, isAdult } from '../lib/access';
 import { ALL_TIERS, TRADING_START_CASH } from '../lib/config';
 import { gbp } from '../lib/format';
 import { currentTier } from '../lib/progress';
@@ -49,7 +50,9 @@ export function Profile({ onRetake, go }: { onRetake: () => void; go: (v: 'pot' 
         <div className="row">
           <Mascot id={s.mascot} size={72} />
           <div className="grow">
-            <span className="tag">{currentTier(s.xp).name} · {p.name}</span>
+            <span className="tag">
+              {currentTier(s.xp).name} · {p.name}
+            </span>
             <h1>{s.name || 'Your profile'}</h1>
             <span className="small">
               with {buddyName(s.mascot, s.look.nick)}, {buddy.tag.toLowerCase()}
@@ -172,24 +175,31 @@ export function Profile({ onRetake, go }: { onRetake: () => void; go: (v: 'pot' 
       <div className="card">
         <div className="row" style={{ justifyContent: 'space-between' }}>
           <h3>Badges</h3>
-          <span className="chip num">
-            {earned}/{BADGES.length}
-          </span>
+          <div className="row nowrap" style={{ gap: 6 }}>
+            <span className="chip num">
+              {earned}/{BADGES.length}
+            </span>
+            <button className="btn ghost" onClick={toggleBadgesHidden} aria-expanded={!s.badgesHidden} aria-controls="badges-body">
+              {s.badgesHidden ? 'Show' : 'Hide'}
+            </button>
+          </div>
         </div>
-        <div className="badges">
-          {BADGES.map((b) => (
-            <div className={'badge' + (s.badges[b.id] ? '' : ' off')} key={b.id}>
-              <span className="medal" aria-hidden="true">
-                {b.glyph}
-              </span>
-              {b.name}
-              <span className="muted small" style={{ fontWeight: 500 }}>
-                {b.how}
-              </span>
-              <span className="sr-only">{s.badges[b.id] ? 'Earned' : 'Locked'}</span>
-            </div>
-          ))}
-        </div>
+        {!s.badgesHidden && (
+          <div className="badges" id="badges-body">
+            {BADGES.map((b) => (
+              <div className={'badge' + (s.badges[b.id] ? '' : ' off')} key={b.id}>
+                <span className="medal" aria-hidden="true">
+                  {b.glyph}
+                </span>
+                {b.name}
+                <span className="muted small" style={{ fontWeight: 500 }}>
+                  {b.how}
+                </span>
+                <span className="sr-only">{s.badges[b.id] ? 'Earned' : 'Locked'}</span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="card">
@@ -202,13 +212,24 @@ export function Profile({ onRetake, go }: { onRetake: () => void; go: (v: 'pot' 
             ☾ Dark
           </button>
         </div>
+        <div className="seg-s" role="group" aria-label="Style">
+          <button className={classicLook(s) ? '' : 'on'} onClick={() => setUiStyle('playful')}>
+            Playful
+          </button>
+          <button className={classicLook(s) ? 'on' : ''} onClick={() => setUiStyle('classic')}>
+            Classic
+          </button>
+        </div>
+        <p className="muted small">Playful is bright and bouncy. Classic is calmer, with serif headings and muted colours. {isAdult(s) ? 'Adults start on Classic.' : 'Under-18s start on Playful.'}</p>
       </div>
 
       {native && (
         <div className="card">
           <h3>Daily reminder</h3>
           {/* shortcut: fires at 6pm even on days you already played; reschedule after each session if that annoys people */}
-          <p className="muted small">A nudge from {buddyName(s.mascot, s.look.nick)} at 6pm each day to keep your {s.streak}-day streak going.</p>
+          <p className="muted small">
+            A nudge from {buddyName(s.mascot, s.look.nick)} at 6pm each day to keep your {s.streak}-day streak going.
+          </p>
           <button
             className={'btn ' + (s.reminder ? 'ghost' : '')}
             onClick={async () => {
@@ -220,7 +241,11 @@ export function Profile({ onRetake, go }: { onRetake: () => void; go: (v: 'pot' 
           >
             {s.reminder ? 'Turn reminder off' : 'Remind me at 6pm'}
           </button>
-          {blocked && <p className="small" style={{ color: 'var(--bad)' }}>Notifications are blocked. Turn them on for Money Sim in the iPhone Settings app.</p>}
+          {blocked && (
+            <p className="small" style={{ color: 'var(--bad)' }}>
+              Notifications are blocked. Turn them on for Money Sim in the iPhone Settings app.
+            </p>
+          )}
         </div>
       )}
 
@@ -235,7 +260,9 @@ export function Profile({ onRetake, go }: { onRetake: () => void; go: (v: 'pot' 
 
       <div className="card">
         <h3>Your data</h3>
-        <p className="muted small">Progress is saved on this device only. Copy a backup code to keep it safe or move it to a new phone. All money is virtual and nothing here is financial advice.</p>
+        <p className="muted small">
+          Progress is saved on this device only. Copy a backup code to keep it safe or move it to a new phone. All money is virtual and nothing here is financial advice.
+        </p>
         <Backup />
         <button
           className={'btn ' + (confirm ? 'bad' : 'ghost')}

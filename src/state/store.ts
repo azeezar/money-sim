@@ -57,6 +57,7 @@ export function defaultState(): State {
     tradeMode: '24h',
     reading: {},
     readingHidden: false,
+    badgesHidden: false,
     look: { color: 'classic', hat: 'none', eyes: 'none', neck: 'none', nick: '' },
     watchlist: DEFAULT_WATCHLIST.slice(),
     seen: {},

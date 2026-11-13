@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Mascot } from '../components/Mascot';
+import { Mascot, type Mood } from '../components/Mascot';
+import type { MascotId } from '../state/types';
 import { findLesson, teachFirst, type Step } from '../data/lessons';
 import { planCtx } from '../lib/plan';
 import { MECHS } from '../mechs';
@@ -154,7 +155,7 @@ export function LessonScreen({ id, onClose, onGames }: { id: string; onClose: ()
       <div className="over">
         <div className="over-in">
           <div className="lbody center">
-            <Mascot id={s.mascot} size={96} />
+            <Mascot id={s.mascot} size={96} mood="happy" />
             <h1>Lesson complete</h1>
             <p className="muted">{found.lesson.title}</p>
             <div className="chips">
@@ -178,7 +179,7 @@ export function LessonScreen({ id, onClose, onGames }: { id: string; onClose: ()
         <div className="over-in">
           {head}
           <div className="lbody center">
-            <Mascot id={s.mascot} size={84} />
+            <Mascot id={s.mascot} size={84} mood="sad" />
             <h1>Out of hearts</h1>
             <p className="muted">Mistakes are how this works. Hearts come back tomorrow, or you can top them up now.</p>
           </div>
@@ -284,6 +285,7 @@ export function LessonScreen({ id, onClose, onGames }: { id: string; onClose: ()
     };
     body = (
       <>
+        <Buddy id={s.mascot} mood={ui.fb ? 'happy' : m.bad ? 'sad' : undefined} />
         <h2>Match each term to its meaning</h2>
         <div className="match">
           <div className="opts">{m.l.map((ix) => btn('l', ix, st.p[ix][0]))}</div>
@@ -308,6 +310,7 @@ export function LessonScreen({ id, onClose, onGames }: { id: string; onClose: ()
     body = (
       <>
         {retry ? <span className="tag">One more try</span> : st.k === 'tf' ? <span className="tag">True or false?</span> : null}
+        <Buddy id={s.mascot} mood={ui.fb ? (ui.fb.ok ? 'happy' : 'sad') : undefined} />
         <h2>{st.q}</h2>
         <div className="opts">
           {ui.ord.map((ix) => {
@@ -343,6 +346,23 @@ export function LessonScreen({ id, onClose, onGames }: { id: string; onClose: ()
         <div className="lbody">{body}</div>
         {foot}
       </div>
+    </div>
+  );
+}
+
+const CHEER = ['Yes! Nailed it!', 'Brilliant!', 'You’re on fire!', 'Spot on!', 'Woohoo!'];
+const OOPS = ['Oh no…', 'So close!', 'We’ll get the next one.', 'Hmm, not that one.'];
+const ASK = ['What do you think?', 'Take your time.', 'You’ve got this.'];
+
+/** The mascot beside each question: thrilled at a right answer, sad at a wrong one. */
+function Buddy({ id, mood }: { id: MascotId; mood?: Mood }) {
+  const say = mood === 'happy' ? CHEER : mood === 'sad' ? OOPS : ASK;
+  // Same line for the whole of one mood, picked fresh each time the mood changes.
+  const line = useMemo(() => say[Math.floor(Math.random() * say.length)], [say]);
+  return (
+    <div className={'buddy' + (mood ? ' ' + mood : '')} aria-live="polite">
+      <Mascot key={mood ?? 'idle'} id={id} size={64} mood={mood} />
+      <span className="bubble">{line}</span>
     </div>
   );
 }

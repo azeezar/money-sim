@@ -21,6 +21,8 @@ export function ageFrom(dob: string | null, now = new Date()): number | null {
 export const validAge = (age: number | null): age is number => age !== null && age >= 4 && age <= 120;
 export const ageOf = (s: State): number | null => ageFrom(s.dob);
 export const isAdult = (s: State): boolean => (ageOf(s) ?? 0) >= ADULT_AGE;
+/** The refined adult look, unless the user picked otherwise. Children get the playful look by default. */
+export const classicLook = (s: State): boolean => (s.uiStyle ? s.uiStyle === 'classic' : isAdult(s));
 /** XP locks are lifted in the admin build. The age rule is not, so admins can preview the under-18 app by editing the age. */
 export const tierOpen = (s: State, id: TierId): boolean => ADMIN || isUnlocked(id, s.xp);
 export const canPortfolio = (s: State): boolean => tierOpen(s, PORTFOLIO_TIER);

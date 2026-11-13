@@ -8,7 +8,7 @@ import { XpBar } from './components/XpBar';
 import { PROFILES } from './data/profiles';
 import { gbp } from './lib/format';
 import { ADMIN } from './lib/mode';
-import { canPortfolio, canTrade, comingNext, isAdult, unlocks } from './lib/access';
+import { canPortfolio, canTrade, classicLook, comingNext, isAdult, unlocks } from './lib/access';
 import { Admin } from './screens/Admin';
 import { Games } from './screens/Games';
 import { Learn } from './screens/Learn';
@@ -49,6 +49,8 @@ const readHash = (): View => {
 
 export default function App() {
   const s = useStore();
+  const classic = classicLook(s);
+  useEffect(() => void (document.documentElement.dataset.look = classic ? 'classic' : 'playful'), [classic]);
   const [view, setView] = useState<View>(readHash);
   const [lesson, setLesson] = useState<string | null>(null);
   const [retake, setRetake] = useState(false);

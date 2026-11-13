@@ -350,6 +350,8 @@ export function toggleRead(id: string): void {
 }
 
 export const toggleReadingHidden = (): void => update((s) => void (s.readingHidden = !s.readingHidden));
+export const setUiStyle = (v: 'playful' | 'classic'): void => update((s) => void (s.uiStyle = v));
+export const toggleBadgesHidden = (): void => update((s) => void (s.badgesHidden = !s.badgesHidden));
 
 /* ------------------------------------------------------------------ mascot */
 

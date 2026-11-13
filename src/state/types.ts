@@ -109,6 +109,10 @@ export interface State {
   reading: Record<string, true>;
   /** Recommended reading folded away on the Learn tab. */
   readingHidden: boolean;
+  /** App look. Missing means automatic: classic for adults, playful for under-18s. */
+  uiStyle?: 'playful' | 'classic';
+  /** Badges folded away on the Profile tab. */
+  badgesHidden: boolean;
   /** How the mascot is dressed. Items unlock with lifetime XP (see components/wardrobe). */
   look: Look;
   /** Symbols in the trading watchlist. */

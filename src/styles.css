@@ -584,7 +584,19 @@ body { overflow-x: clip; } /* clip, not hidden: hidden would break the sticky he
 @keyframes m-tumble { 0%, 100% { transform: none; } 50% { transform: translateX(30%) rotate(180deg); } }
 @keyframes m-slide { 0%, 100% { transform: none; } 25% { transform: translateX(-35%) rotate(-18deg); } 75% { transform: translateX(35%) rotate(18deg); } }
 @keyframes m-glitch { 0%, 100% { transform: none; filter: none; } 20% { transform: skewX(18deg); filter: hue-rotate(90deg); } 40% { transform: scale(1.15); } 60% { transform: skewX(-18deg) translateX(6%); filter: hue-rotate(200deg); } 80% { transform: translateX(-6%); } }
-@media (prefers-reduced-motion: reduce) { .mascot, .mascot.trick { animation: none; } }
+/* Moods: thrilled bounce with waving arms, or a slump. */
+.mascot.happy { animation: m-cheer 0.55s ease-in-out 3; }
+.mascot.sad { animation: m-sad 0.9s ease-out both; }
+.mascot .hand { transform-box: fill-box; }
+.mascot .hand.l { transform-origin: 100% 100%; } .mascot .hand.r { transform-origin: 0% 100%; }
+.mascot.happy .hand, .mascot.trick .hand { animation: m-wave 0.3s ease-in-out infinite alternate; }
+.mascot.happy .hand.r, .mascot.trick .hand.r { animation-direction: alternate-reverse; }
+.mascot.sad .hand { animation: m-shake 0.5s ease-in-out 3; }
+@keyframes m-cheer { 0%, 100% { transform: none; } 35% { transform: translateY(-16%) scale(0.95, 1.06); } 60% { transform: scale(1.08, 0.93); } }
+@keyframes m-sad { 0% { transform: none; } 100% { transform: translateY(6%) rotate(-6deg) scale(0.96); } }
+@keyframes m-wave { from { transform: rotate(-14deg); } to { transform: rotate(14deg); } }
+@keyframes m-shake { 0%, 100% { transform: none; } 50% { transform: translateY(1.5px); } }
+@media (prefers-reduced-motion: reduce) { .mascot, .mascot.trick, .mascot .hand { animation: none !important; } }
 .h-mascot { background: linear-gradient(135deg, #2bb5a0, #6a45e8 75%); align-items: center; text-align: center; }
 .h-mascot .field { width: 100%; max-width: 280px; text-align: left; color: #fff; }
 .mascot-stage { background: rgba(255,255,255,0.14); border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; width: 190px; height: 190px; display: grid; place-items: center; margin-top: 18px; cursor: pointer; }
@@ -609,3 +621,69 @@ body { overflow-x: clip; } /* clip, not hidden: hidden would break the sticky he
 .mx-table th:first-child, .mx-table td:first-child { text-align: left; }
 .mx-table tr.ok td { background: var(--good-bg); } .mx-table tr.no td { background: var(--bad-bg); }
 .mx-big { font-family: var(--display); font-size: 2.2rem; font-weight: 800; text-align: center; }
+.buddy { display: flex; align-items: center; gap: 10px; min-height: 72px; }
+.buddy .bubble { position: relative; background: var(--soft); border: 2px solid var(--line); border-radius: 14px; padding: 6px 12px; font-weight: 800; font-size: 0.9rem; }
+.buddy .bubble::before { content: ''; position: absolute; left: -8px; top: 50%; margin-top: -6px; border: 6px solid transparent; border-right-color: var(--line); border-left: 0; }
+.buddy.happy .bubble { background: var(--good-bg); border-color: var(--good); color: var(--good-deep); }
+.buddy.sad .bubble { background: var(--bad-bg); border-color: var(--bad); color: var(--bad); }
+
+/* ================================================================ Classic look (adults by default)
+   Same layout as Playful: cream and navy with brass accents, serif headings, hairline borders, no chunky 3D buttons. */
+:root[data-look='classic'] {
+  --bg: #f6f3ec; --soft: #efeae0; --surface: #fffdf8; --ink: #1c2230; --muted: #6c6a64; --line: #e2dbcc;
+  --primary: #1f3a5f; --primary-deep: #142840; --on-primary: #f8f5ee; --primary-soft: #e4e9f0;
+  --coin: #b08d57; --coin-deep: #8a6c3e; --on-coin: #fffdf8; --coin-soft: #f3ecdf;
+  --good: #2f6b4f; --good-deep: #234f3b; --on-good: #ffffff; --good-bg: #e4efe8;
+  --bad: #8c2f39; --bad-deep: #6b222b; --on-bad: #ffffff; --bad-bg: #f5e5e4;
+  --sky: #34587f; --sky-deep: #24405f; --sky-soft: #e4ebf2;
+  --pink: #7a3b52; --pink-deep: #5a2a3c; --pink-soft: #f2e6ea;
+  --teal: #3b6e6a; --teal-soft: #e2eeec; --orange: #a5683a; --orange-soft: #f4e9df;
+  --locked: #e6e0d4; --locked-deep: #d6cebf; --on-locked: #8f8a80;
+  --shadow: 0 1px 2px rgba(28, 34, 48, 0.05), 0 6px 20px rgba(28, 34, 48, 0.04);
+  --display: 'Iowan Old Style', 'Baskerville', 'Palatino Linotype', Palatino, Georgia, serif;
+  --body: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', system-ui, sans-serif;
+}
+:root[data-look='classic'][data-theme='dark'] {
+  --bg: #0f131b; --soft: #161b25; --surface: #1a2029; --ink: #ece6d8; --muted: #a09a8d; --line: #2b3240;
+  --primary: #c9a96e; --primary-deep: #a3864f; --on-primary: #14110b; --primary-soft: #2c2a22;
+  --coin: #c9a96e; --coin-deep: #a3864f; --on-coin: #14110b; --coin-soft: #2c2a22;
+  --good: #6fae8c; --good-deep: #4f8c6c; --on-good: #0c1a13; --good-bg: #1a2b23;
+  --bad: #d07a82; --bad-deep: #a8545c; --on-bad: #1f0a0d; --bad-bg: #2e1c20;
+  --sky: #8fb0d6; --sky-deep: #6688b0; --sky-soft: #1c2533;
+  --pink: #c792a6; --pink-deep: #9c6a7e; --pink-soft: #2c1f26;
+  --teal: #84b9b3; --teal-soft: #1a2a29; --orange: #d0a07a; --orange-soft: #2c231b;
+  --locked: #262c37; --locked-deep: #1e232c; --on-locked: #7c776d;
+  --shadow: none;
+}
+[data-look='classic'] h1, [data-look='classic'] h2, [data-look='classic'] h3 { font-weight: 600; letter-spacing: -0.01em; }
+[data-look='classic'] h1 { font-size: 1.85rem; }
+[data-look='classic'] body { font-weight: 400; }
+[data-look='classic'] .tag { font-weight: 600; letter-spacing: 0.14em; }
+[data-look='classic'] .brand b { background: none; color: var(--coin); -webkit-text-fill-color: currentColor; }
+
+/* Flat, hairline controls instead of chunky 3D ones. */
+[data-look='classic'] :is(.btn, .btn.ghost, .opt, .chip, .tiertab, .mx-exp, .mx-feed, .mbtn, .nodew .go, .unithead, .tab, .sidelink) { border-width: 1px; border-bottom-width: 1px; border-radius: 8px; }
+[data-look='classic'] .btn { font-weight: 600; letter-spacing: 0.03em; border-color: transparent; }
+[data-look='classic'] .btn.ghost { border-color: var(--line); }
+[data-look='classic'] .btn:active { transform: none; border-bottom-width: 1px; margin-top: 0; opacity: 0.85; }
+[data-look='classic'] :is(.card, .teach, .t2-head, .t2-list, .mx-lane, .fb, .learnsec, .gitem) { border-width: 1px; border-radius: 10px; }
+[data-look='classic'] .learnsec { border-left-width: 3px; border-left-color: var(--coin); }
+[data-look='classic'] :is(.opt, .chip, .stat, .node .lbl, .nodew .lbl, .mbtn b) { font-weight: 600; }
+[data-look='classic'] .bar { height: 8px; }
+
+/* Heroes, units and nodes: solid navy and brass, no candy gradients. */
+[data-look='classic'] .hero { background: var(--primary) !important; color: var(--on-primary); border-bottom: 0; border-radius: 12px; }
+[data-look='classic'] .hero :is(h1, h2, .tag, .muted) { color: var(--on-primary); }
+[data-look='classic'] .hero .chip { background: transparent; border-color: color-mix(in srgb, var(--on-primary) 35%, transparent); color: var(--on-primary); }
+[data-look='classic'] .unit { background: var(--surface) !important; color: var(--ink); border: 1px solid var(--line); border-left: 4px solid var(--coin); border-radius: 10px; }
+[data-look='classic'] .node { background: var(--primary); color: var(--on-primary); border-bottom: 3px solid var(--primary-deep); }
+[data-look='classic'] .node.locked { background: var(--locked); color: var(--on-locked); border-bottom-color: var(--locked-deep); }
+[data-look='classic'] .medal { background: var(--coin); border-bottom-width: 2px; }
+[data-look='classic'] .tab.on, [data-look='classic'] .sidelink.on { background: var(--primary-soft); border-color: var(--primary); color: var(--primary); }
+[data-look='classic'] .welcome { background: linear-gradient(170deg, #142840 0%, #1f3a5f 60%, #34587f 130%); }
+[data-look='classic'] .welcome-hero h1 b { color: #d9bd85; }
+[data-look='classic'] .welcome-pts span { background: rgba(255, 255, 255, 0.1); font-weight: 600; }
+[data-look='classic'] .welcome-act { border-radius: 14px; }
+[data-look='classic'] .t2-sheet { border-radius: 14px 14px 0 0; }
+[data-look='classic'] .buddy .bubble { font-weight: 600; border-width: 1px; border-radius: 10px; }
+[data-look='classic'] .tab { font-size: 0.68rem; font-weight: 600; line-height: 1.15; text-align: center; }
