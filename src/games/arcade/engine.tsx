@@ -191,6 +191,9 @@ export function Arcade({ name, how, controls, make, level, kid, onFinish }: Arca
       input.keys[e.key] = true;
     };
     const ku = (e: KeyboardEvent) => void (input.keys[e.key] = false);
+    // iOS shows a magnifier on long presses unless the touch itself is cancelled; pointer events still fire.
+    const ts = (e: TouchEvent) => e.preventDefault();
+    c.addEventListener('touchstart', ts, { passive: false });
     c.addEventListener('pointermove', pm);
     c.addEventListener('pointerdown', pd);
     addEventListener('pointerup', pu);
@@ -221,6 +224,7 @@ export function Arcade({ name, how, controls, make, level, kid, onFinish }: Arca
     raf = requestAnimationFrame(frame);
     return () => {
       cancelAnimationFrame(raf);
+      c.removeEventListener('touchstart', ts);
       c.removeEventListener('pointermove', pm);
       c.removeEventListener('pointerdown', pd);
       removeEventListener('pointerup', pu);
