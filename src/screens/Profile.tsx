@@ -37,7 +37,8 @@ export function Profile({ onRetake, go }: { onRetake: () => void; go: (v: 'pot' 
   const tv = { value: valueOf(s.trading, clockOf(s.trading, now)).value + valueOf(s.tradingUk, clockOf(s.tradingUk, now)).value };
   const tStart = (s.trading.start ?? TRADING_START_CASH) + (s.tradingUk.start ?? TRADING_START_CASH);
   const tradeOpen = canTrade(s);
-  const net = s.goal.saved + pv.value + (tradeOpen ? tv.value : 0);
+  // Net worth is the savings and budget side only (the savings pot, which month-end budget savings feed). Practice investing is shown but not counted.
+  const net = s.goal.saved;
   const g = s.goal;
   const gp = g.target > 0 ? Math.min(100, (g.saved / g.target) * 100) : 0;
   const bs = summarise(s.budget, s.monthly);
@@ -70,18 +71,19 @@ export function Profile({ onRetake, go }: { onRetake: () => void; go: (v: 'pot' 
       <div className="card">
         <span className="tag">Net worth (virtual)</span>
         <div className="big num">{gbp(net)}</div>
+        <p className="muted small" style={{ margin: 0 }}>Your savings and budget. The portfolio and trading simulator are practice, so they are not counted.</p>
         <div className="tiles four">
           <button className="tile c1" onClick={() => go('pot')}>
             <span className="small">Savings pot</span>
             <b className="num">{gbp(g.saved)}</b>
           </button>
           <button className="tile c2" onClick={() => go('portfolio')}>
-            <span className="small">Portfolio</span>
+            <span className="small">Portfolio · not counted</span>
             <b className="num">{gbp(pv.value)}</b>
             <span className={'small num ' + (pv.value >= s.portfolioStart ? 'up' : 'down')}>{pctS((pv.value - s.portfolioStart) / s.portfolioStart)}</span>
           </button>
           <button className="tile c3" onClick={() => isAdult(s) && go('trade')}>
-            <span className="small">Trading</span>
+            <span className="small">Trading · not counted</span>
             {tradeOpen ? (
               <>
                 <b className="num">{gbp(tv.value)}</b>
