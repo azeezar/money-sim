@@ -607,9 +607,6 @@ body { overflow-x: clip; } /* clip, not hidden: hidden would break the sticky he
 .mx-seesaw { position: relative; height: 110px; display: flex; align-items: center; justify-content: center; }
 .mx-beam { width: 88%; display: flex; justify-content: space-between; border-bottom: 6px solid var(--ink); border-radius: 3px; padding-bottom: 6px; transition: transform 0.2s; }
 .mx-pivot { position: absolute; bottom: 14px; width: 0; height: 0; border: 16px solid transparent; border-bottom: 24px solid var(--muted); border-top: 0; }
-.mx-dca { display: flex; align-items: flex-end; gap: 4px; height: 120px; }
-.mx-dca i { flex: 1; background: var(--soft); border: 2px solid var(--line); border-radius: 6px 6px 2px 2px; transition: background 0.2s; }
-.mx-dca i.on { background: var(--primary); border-color: var(--primary); }
 .mx-chart { width: 100%; height: auto; background: var(--soft); border: 2px solid var(--line); border-radius: 14px; overflow: visible; }
 .mx-fall { display: flex; gap: 4px; align-items: stretch; }
 .mx-fallcol { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; transition: opacity 0.2s; }
@@ -687,3 +684,4 @@ body { overflow-x: clip; } /* clip, not hidden: hidden would break the sticky he
 [data-look='classic'] .t2-sheet { border-radius: 14px 14px 0 0; }
 [data-look='classic'] .buddy .bubble { font-weight: 600; border-width: 1px; border-radius: 10px; }
 [data-look='classic'] .tab { font-size: 0.68rem; font-weight: 600; line-height: 1.15; text-align: center; }
+.mx-say { text-align: center; margin: 0; }

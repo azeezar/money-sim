@@ -84,9 +84,6 @@ export function bondPrice(face: number, coupon: number, rate: number, years: num
 /** Pot after `years` at `gross` growth, with a yearly fee `fee` taken from the balance. */
 export const afterFees = (p: number, gross: number, fee: number, years: number): number => p * Math.pow((1 + gross) * (1 - fee), years);
 
-/** Average price paid per unit when investing the same amount at each price. */
-export const avgCost = (prices: number[]): number => prices.length / prices.reduce((a, p) => a + 1 / p, 0);
-
 /** Pot left each year when withdrawing `first` (raised by `inflation` yearly) before each year's return. Stops at 0. */
 export function drawdown(pot: number, first: number, inflation: number, rets: number[]): number[] {
   const out = [pot];

@@ -1,5 +1,6 @@
 import { gbp } from '../../lib/format';
 import { Arcade, disc, pick, pill, rand, rr, steer, text, type ArcadeProps, type Game, type World } from './engine';
+import { catcher } from './kit';
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 const shuffle = <T,>(a: T[]): T[] => a.map((v) => [Math.random(), v] as const).sort((p, q) => p[0] - q[0]).map((p) => p[1]);
@@ -700,92 +701,28 @@ export const TaxMaze = (p: ArcadeProps) => (
   <Arcade {...p} name="Tax Shield Maze" how="Income streams flow down the pipes. Flip the two switches to send long-term money to the pension, money you need sooner (⏳) to the ISA, and only overflow to taxable. Route 9 of 12 well to win." controls="Tap a switch, or press ← for the top switch and → for the lower one." make={taxMaze} />
 );
 
-/* ---------------------------------------------------------------- 8.1 DCA Auto-Pilot */
+/* ---------------------------------------------------------------- 8.1 Card Sense */
 
-export function dcaAutopilot(w: World): Game {
-  const { W, H, C, pace, input } = w;
-  const MONTHS = 12;
-  const PER = 30;
-  const MONTH_S = 2.4 / pace;
-  const prices: number[] = [];
-  let p = 10;
-  let trend = 0;
-  for (let i = 0; i < MONTHS * PER; i++) {
-    if (i % 45 === 0) trend = rand(-0.006, 0.007);
-    p = clamp(p * (1 + trend + rand(-0.02, 0.02)), 4, 25);
-    prices.push(p);
-  }
-  const buys: { i: number; p: number; auto: boolean }[] = [];
-  let t = 0;
-  let month = 0;
-  let bought = false;
-  const idx = () => Math.min(prices.length - 1, Math.floor((t / MONTH_S) * PER));
-  const lo = Math.min(...prices) * 0.9;
-  const hi = Math.max(...prices) * 1.05;
-  const top = 40;
-  const bot = H - 80;
-  const px = (i: number) => 20 + (i / (prices.length - 1)) * (W - 40);
-  const py = (v: number) => bot - ((v - lo) / (hi - lo)) * (bot - top);
-  const avg = (ps: number[]) => ps.length / ps.reduce((a, b) => a + 1 / b, 0); // £100 each time: harmonic mean
-  const pilot = avg(Array.from({ length: MONTHS }, (_, m) => prices[m * PER]));
-  return {
-    tick(dt) {
-      if (month >= MONTHS) return;
-      t += dt;
-      const i = idx();
-      if (!bought && (input.taps.length || input.hits.has(' '))) {
-        buys.push({ i, p: prices[i], auto: false });
-        bought = true;
-      }
-      const m = Math.floor(t / MONTH_S);
-      if (m > month) {
-        if (!bought) {
-          const last = month * PER + PER - 1;
-          buys.push({ i: last, p: prices[last], auto: true });
-        }
-        month = m;
-        bought = false;
-      }
-    },
-    draw(x) {
-      const i = idx();
-      for (let m = 0; m < MONTHS; m++) {
-        x.fillStyle = m === month ? C.coin : m % 2 ? C.line : C.soft;
-        x.globalAlpha = m === month ? 0.25 : 0.5;
-        x.fillRect(px(m * PER), top, px(PER) - px(0), bot - top);
-        x.globalAlpha = 1;
-      }
-      x.strokeStyle = C.pri;
-      x.lineWidth = 2.5;
-      x.beginPath();
-      for (let k = 0; k <= i; k++) (k ? x.lineTo : x.moveTo).call(x, px(k), py(prices[k]));
-      x.stroke();
-      for (const b of buys) disc(x, px(b.i), py(b.p), 6, b.auto ? C.muted : C.coin, b.auto ? C.line : C.coinD);
-      if (month < MONTHS) {
-        disc(x, px(i), py(prices[i]), 5, C.pri, C.priD);
-        pill(x, `£${prices[i].toFixed(2)}`, clamp(px(i), 40, W - 40), py(prices[i]) - 22, C.surface, C.line, C.ink, 11);
-      }
-      const mine = buys.length ? avg(buys.map((b) => b.p)) : 0;
-      text(x, `Units ${buys.reduce((a, b) => a + 100 / b.p, 0).toFixed(1)}`, 20, H - 56, C.ink, 13, 'left');
-      text(x, `Your avg £${mine ? mine.toFixed(2) : '—'}`, W - 20, H - 56, C.ink, 13, 'right');
-      text(x, bought ? 'Bought this month ✓' : month < MONTHS ? 'Tap to buy £100 · else auto-buy at month end' : '', W / 2, H - 28, bought ? C.goodD : C.muted, 12);
-    },
-    hud: () => [`Month ${Math.min(MONTHS, month + 1)} / ${MONTHS}`, `£${buys.length * 100} invested`],
-    over: () => {
-      if (month < MONTHS) return null;
-      const mine = avg(buys.map((b) => b.p));
-      const simple = prices.reduce((a, b) => a + b, 0) / prices.length;
-      return {
-        score: Math.round(mine * 100),
-        good: mine <= pilot * 1.01,
-        text: `Your average cost: £${mine.toFixed(2)}. Buying on the 1st every month: £${pilot.toFixed(2)}. Average price over the year: £${simple.toFixed(2)}. A fixed £100 buys more units when prices dip, so even the auto-pilot usually beats the average price without any timing.`,
-      };
-    },
-  };
-}
-
-export const DcaAutopilot = (p: ArcadeProps) => (
-  <Arcade {...p} name="DCA Auto-Pilot" how="A year of prices, one month at a time. You invest £100 every month: tap to pick your moment, or the auto-pilot buys at month end. Match or beat the buy-on-the-1st average cost to win." controls="Tap the chart, or press Space, to buy this month." make={dcaAutopilot} />
+const SMART = ['Pay the full balance', 'Direct debit set up', 'Pay before the due date', 'Use 20% of my limit', 'Check the statement', 'Big buy? Section 75 cover'];
+const TRAPS: [string, string][] = [
+  ['Pay the minimum only', 'Interest piles up: £1,500 can take 6 years to clear.'],
+  ['Cash out on the card', 'Fees and interest start the same day.'],
+  ['Max out the limit', 'Maxed-out cards hurt your credit score.'],
+  ['Miss a payment', 'Late fees, and a mark on your credit file.'],
+  ['New card to pay the old', 'Juggling cards just moves the debt around.'],
+  ['Buy now, worry later', 'If you cannot pay it off this month, think twice.'],
+];
+export const cardSense = (w: World) =>
+  catcher(w, {
+    tray: 'Your wallet',
+    next: () => (Math.random() < 0.55 ? { label: pick(SMART), good: true, why: '' } : (([label, why]) => ({ label, good: false, why }))(pick(TRAPS))),
+    goal: 12,
+    secs: 45,
+    win: 'A credit card is a handy tool when you clear it in full every month.',
+    lose: 'The traps: minimum payments, cash withdrawals, maxed-out limits and missed payments.',
+  });
+export const CardSense = (p: ArcadeProps) => (
+  <Arcade {...p} name="Card Sense" how="Card habits fall into your wallet. Catch the smart ones and dodge the debt traps. Catch 12 in 45 seconds with a life left to win." controls="Slide your finger or use the arrow keys to move." make={cardSense} />
 );
 
 /* ---------------------------------------------------------------- 8.2 Target Rebalancer */
@@ -902,6 +839,6 @@ export const INTERMEDIATE_ARCADE = {
   'fee-eater': FeeEater,
   'mix-master': MixMaster,
   'tax-maze': TaxMaze,
-  'dca-autopilot': DcaAutopilot,
+  'card-sense': CardSense,
   'target-rebalancer': TargetRebalancer,
 };

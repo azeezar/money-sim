@@ -277,7 +277,7 @@ export function YieldCurve({ onDone }: MechProps) {
         <span>5-year</span>
         <span>10-year</span>
       </div>
-      <p className="center">
+      <p className="mx-say">
         <b style={{ color: inv ? 'var(--bad)' : 'var(--good-deep)' }}>{inv ? '⚠ Inverted: recession signal' : 'Normal: long bonds pay more'}</b>
       </p>
       <Range label="2-year yield" value={short} min={0.5} max={7.5} step={0.1} fmt={(n) => `${n.toFixed(1)}%`} onChange={(n) => (setShort(n), set(n, long))} />

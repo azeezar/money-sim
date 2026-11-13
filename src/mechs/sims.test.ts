@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { RACE_DEBTS } from './novice';
-import { afterFees, avgCost, bondPrice, drawdown, grow, mixStats, payoff, race, realValue } from './sims';
+import { afterFees, bondPrice, drawdown, grow, mixStats, payoff, race, realValue } from './sims';
 
 describe('mechanic maths', () => {
   it('compounds and deflates', () => {
@@ -35,9 +35,10 @@ describe('intermediate mechanic maths', () => {
     expect(afterFees(10000, 0.06, 0, 30)).toBeCloseTo(grow(10000, 0.06, 30), 6);
     expect(afterFees(10000, 0.06, 0.015, 30) / afterFees(10000, 0.06, 0.001, 30)).toBeLessThan(0.7);
   });
-  it('a fixed amount buys at or below the average price', () => {
-    expect(avgCost([10, 10])).toBe(10);
-    expect(avgCost([5, 10, 15])).toBeLessThan(10);
+  it('the minimum payment trap', () => {
+    expect(payoff(1500, 0.249, 40).months).toBe(74);
+    expect(payoff(1500, 0.249, 140).months).toBeLessThanOrEqual(13);
+    expect(payoff(1500, 0.249, 30).months).toBe(Infinity);
   });
 });
 

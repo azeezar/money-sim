@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { gbp, shuffle } from '../lib/format';
 import { Done, Range, p2, type MechProps } from './novice';
-import { afterFees, avgCost, bondPrice } from './sims';
+import { afterFees, bondPrice, payoff } from './sims';
 
 /** Calls onDone once, the first time `ok` is true. */
 export function useDoneWhen(ok: boolean, onDone: () => void) {
@@ -293,50 +293,41 @@ export const TaxRouter = ({ onDone }: MechProps) => (
   />
 );
 
-/* ---------------------------------------------------------------- 8.1 DCA Simulator */
+/* ---------------------------------------------------------------- 8.1 Minimum Payment Trap */
 
-const PRICES = [10, 9, 7.5, 6, 7, 8.5, 6.5, 8, 9.5, 11, 10, 12];
-
-export function DcaSim({ onDone }: MechProps) {
-  const [m, setM] = useState(0);
-  const units = PRICES.slice(0, m).reduce((a, p) => a + 100 / p, 0);
-  const done = m === 12;
-  useDoneWhen(done, onDone);
-  const max = Math.max(...PRICES);
+export function CardPayoff({ onDone }: MechProps) {
+  const BAL = 1500;
+  const APR = 0.249;
+  const [pay, setPay] = useState(40);
+  const r = payoff(BAL, APR, pay);
+  const min = payoff(BAL, APR, 40);
+  const ok = r.months <= 12;
+  useDoneWhen(ok, onDone);
+  const yrs = (m: number) => (m <= 12 ? `${m} months` : `about ${(m / 12).toFixed(1)} years`);
   return (
     <div className="col">
-      <p className="muted small">Invest £100 on the 1st of every month, whatever the price. Tap through the year.</p>
-      <div className="mx-dca" role="img" aria-label="Prices for the year">
-        {PRICES.map((p, k) => (
-          <i key={k} className={k < m ? 'on' : ''} style={{ height: `${(p / max) * 100}%` }} title={p2(p)} />
+      <p className="muted small">You owe {gbp(BAL)} on a credit card at {pct(APR)} APR and stop using it. Drag the monthly repayment until the debt is gone within a year.</p>
+      <div className="mx-bars">
+        {(
+          [
+            ['You borrowed', BAL, 'var(--primary)'],
+            ['Interest you pay', r.interest, 'var(--bad)'],
+          ] as const
+        ).map(([n, v, c]) => (
+          <div key={n} className="mx-barcol">
+            <b className="num">{gbp(v)}</b>
+            <div className="mx-barwrap">
+              <i style={{ height: `${Math.min(100, (v / BAL) * 100)}%`, background: c }} />
+            </div>
+            <span className="small">{n}</span>
+          </div>
         ))}
       </div>
-      <div className="mx-lane">
-        <div className="row" style={{ justifyContent: 'space-between' }}>
-          <span>Invested</span>
-          <b className="num">{gbp(m * 100)}</b>
-        </div>
-        <div className="row" style={{ justifyContent: 'space-between' }}>
-          <span>Units owned</span>
-          <b className="num">{units.toFixed(1)}</b>
-        </div>
-        {m > 0 && (
-          <div className="row" style={{ justifyContent: 'space-between' }}>
-            <span>This month: £100 bought</span>
-            <b className="num">{(100 / PRICES[m - 1]).toFixed(1)} units at {p2(PRICES[m - 1])}</b>
-          </div>
-        )}
-      </div>
-      {!done && (
-        <button className="btn wide" onClick={() => setM(m + 1)}>
-          Buy month {m + 1}
-        </button>
-      )}
-      {done && (
-        <Done>
-          The average price over the year was {p2(PRICES.reduce((a, p) => a + p, 0) / 12)}, but you paid {p2(avgCost(PRICES))} per unit, because £100 bought more in the dips. Your {units.toFixed(1)} units are worth {gbp(units * PRICES[11])} now.
-        </Done>
-      )}
+      <p className="mx-say">
+        Cleared in <b className="num">{yrs(r.months)}</b>, paying <b className="num">{gbp(BAL + r.interest)}</b> in total.
+      </p>
+      <Range label="Monthly repayment" value={pay} min={35} max={300} step={5} fmt={gbp} onChange={setPay} />
+      {ok && <Done>At {gbp(pay)} a month the card is clear in {r.months} months for {gbp(r.interest)} of interest. Paying £40 would have taken {yrs(min.months)} and cost {gbp(min.interest)}. Better still: pay the full balance every month and pay no interest at all.</Done>}
     </div>
   );
 }
@@ -353,7 +344,7 @@ export function DriftCorrector({ onDone }: MechProps) {
     <div className="col">
       <p className="muted small">A strong year for shares drifted your £10,000 to 85/15. Your target is 70/30. Sell shares into bonds to get back on target.</p>
       <div className="mx-pie" style={{ alignSelf: 'center', background: `conic-gradient(var(--primary) 0 ${shares / 100}%, var(--coin) ${shares / 100}% 100%)` }} role="img" aria-label={`${shares / 100}% shares`} />
-      <p className="center small">
+      <p className="mx-say small">
         Shares <b className="num">{gbp(shares)}</b> ({shares / 100}%) · Bonds <b className="num">{gbp(TOTAL - shares)}</b> ({(TOTAL - shares) / 100}%)
       </p>
       <Range label="Sell shares, buy bonds" value={moved} min={0} max={3000} step={100} fmt={gbp} onChange={setMoved} />
@@ -369,6 +360,6 @@ export const INTERMEDIATE_MECHS = {
   'fee-decay': FeeDecay,
   'risk-mixer': RiskMixer,
   'tax-router': TaxRouter,
-  'dca-sim': DcaSim,
+  'card-payoff': CardPayoff,
   'drift-corrector': DriftCorrector,
 };

@@ -152,15 +152,17 @@ export const INTERMEDIATE: Lesson[] = [
       tf('Money in a pension can usually be taken out at any age.', false, 'UK pensions are locked until at least 55, rising to 57 in 2028.'),
     ]),
   ]),
-  ...unit('Unit 8: Execution & Discipline', [
-    cur('8.1', 'Dollar-Cost Averaging', 8, ['dca-sim', 'DCA Simulator', 'Make 12 monthly buys through a bumpy market and check your average cost.'], ['dca-autopilot', 'DCA Auto-Pilot', 'Time your monthly buys across peaks and dips.'], [
-      card('Investing a fixed amount', 'Dollar-cost averaging (pound-cost averaging in the UK) means investing the same amount on a schedule, say £100 every month, whatever the price. When prices are low your £100 buys more units; when high, fewer.'),
-      card('Why it helps', 'It removes the urge to time the market and smooths your average price. It does not guarantee a profit, but it builds a steady habit and stops one bad entry day from defining your result.'),
-      match([['Dollar-cost averaging', 'A fixed amount on a schedule'], ['Average cost', 'Total paid ÷ units owned'], ['Market timing', 'Trying to buy at the bottom'], ['Units', 'What your money buys in a fund']]),
-      mc('£100 buys units at £10 one month and £5 the next. How many units in total?', ['30', '20', '15', '200'], '10 units, then 20 units.'),
-      mc('In that example, what is your average cost per unit?', ['About £6.67', '£7.50', '£10', '£5'], '£200 ÷ 30 units ≈ £6.67.'),
-      mc('What does dollar-cost averaging mainly protect against?', ['Putting everything in on one bad day', 'Every possible loss', 'Fees', 'Inflation'], 'It spreads your entry points over time.'),
-      tf('Dollar-cost averaging guarantees you will make money.', false, 'If the market falls and stays down, you can still lose.'),
+  ...unit('Unit 8: Credit & Discipline', [
+    cur('8.1', 'Credit Cards & Card Debt', 8, ['card-payoff', 'Minimum Payment Trap', 'Set your monthly repayment and watch how long a £1,500 card balance takes to clear.'], ['card-sense', 'Card Sense', 'Catch smart card habits and dodge the debt traps.'], [
+      card('How a credit card works', 'A credit card lets you borrow up to a set limit and pay later. Each month you get a statement. Pay the full balance by the due date and you usually pay no interest on purchases: that gap, often up to 56 days, is the interest-free period.'),
+      card('The minimum payment trap', 'Pay only part of the balance and interest, often 20–30% APR, is added to the rest. £1,500 at 24.9% APR, paid off at £40 a month, takes about 6 years and costs about £1,430 in interest: almost double what you borrowed. At £140 a month it is gone in about a year for around £210.'),
+      card('Using a card well', 'Set a direct debit to pay the full balance. Keep your spending well under your limit, never take cash out on a credit card (fees and interest start straight away), and always pay on time to build your credit score. In the UK, Section 75 makes the card company jointly responsible for purchases from £100 to £30,000.'),
+      match([['Credit limit', 'The most you can borrow on the card'], ['Minimum payment', 'The smallest amount you must pay each month'], ['Interest-free period', 'Time to repay purchases before interest is added'], ['Credit utilisation', 'How much of your limit you are using']]),
+      mc('Which habit means you pay no interest on card purchases?', ['Paying the full balance every month', 'Paying the minimum on time', 'Paying half the balance', 'Paying whenever you remember'], 'Clearing the full statement balance by the due date keeps purchases interest-free.'),
+      mc('You owe £1,500 at 24.9% APR and pay £40 a month. Roughly how long until it is cleared?', ['About 6 years', 'About 1 year', 'About 3 years', 'About 10 months'], 'Most of each £40 goes on interest at first, so it takes about 74 months.'),
+      mc('Why avoid taking cash out on a credit card?', ['Fees and interest usually start straight away', 'It is always free', 'It boosts your credit score', 'It earns you cashback'], 'Cash withdrawals skip the interest-free period and often carry a fee too.'),
+      tf('Using a small part of your limit and paying on time can help your credit score.', true, 'Lenders like to see borrowing kept low and repaid reliably.'),
+      tf('With £3,000 on a card at 25% APR and £5,000 in savings at 4%, keeping both is usually cheapest.', false, 'The card costs far more than the savings earn. Clearing it, while keeping some emergency cash, usually saves money.'),
     ]),
     cur('8.2', 'Portfolio Rebalancing', 8, ['drift-corrector', 'Drift Corrector', 'Bring a drifted 85/15 portfolio back to its 70/30 target.'], ['target-rebalancer', 'Target Rebalancer', 'Keep your mix on target through wild market spikes.'], [
       card('Drift', 'Over time, the parts of your portfolio grow at different speeds. A 70/30 shares/bonds mix can drift to 85/15 after a strong run in shares, which means you are now taking more risk than you planned.'),

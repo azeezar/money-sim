@@ -33,7 +33,7 @@ export function PayoffPlotter({ onDone }: MechProps) {
         ))}
       </div>
       <Lines label={`${call ? 'Call' : 'Put'} payoff`} lo={-10} hi={50} zero={0} series={[{ ys: xs.map((x) => Math.min(50, pl(x))), color: 'var(--primary)' }]} />
-      <p className="center">
+      <p className="mx-say">
         Share at <b className="num">£{S}</b>: <b className="num" style={{ color: v > 0 ? 'var(--good-deep)' : 'var(--bad)' }}>{v > 0 ? `+£${v}` : `−£${-v}`}</b> per share
       </p>
       <Range label="Strike price" value={K} min={80} max={120} step={5} fmt={(n) => `£${n}`} onChange={(n) => (setK(n), note(call, n, S))} />
@@ -162,7 +162,7 @@ export function JCurve({ onDone }: MechProps) {
     <div className="col">
       <p className="muted small">A venture fund invests in 25 startups. Step through its 10 years and watch its value against what investors put in.</p>
       <Lines label="Fund value vs. money put in" lo={-25} hi={100} zero={0} series={[{ ys: J, color: J[y] < 0 ? 'var(--bad)' : 'var(--good)', n: y + 1 }]} />
-      <p className="center">
+      <p className="mx-say">
         Year {y}: <b className="num" style={{ color: J[y] < 0 ? 'var(--bad)' : 'var(--good-deep)' }}>{J[y] >= 0 ? '+' : ''}{J[y]}%</b> · {note}
       </p>
       {y < 10 && (

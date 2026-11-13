@@ -9,7 +9,7 @@ const C = new Proxy({}, { get: () => '#888' }) as Palette;
 const ctx = new Proxy({}, { get: (_, k) => (k === 'measureText' ? () => ({ width: 40 }) : () => {}), set: () => true }) as unknown as CanvasRenderingContext2D;
 
 const makers = [
-  ...[G.shareSlicers, G.yieldSeesaw, G.basketBuilder, G.feeEater, G.mixMaster, G.taxMaze, G.dcaAutopilot, G.targetRebalancer],
+  ...[G.shareSlicers, G.yieldSeesaw, G.basketBuilder, G.feeEater, G.mixMaster, G.taxMaze, G.cardSense, G.targetRebalancer],
   ...[A.marginHero, A.cashflowPlumber, A.valuationMatchmaker, A.discountMachine, A.fedChair, A.recessionRider, A.mindOverMarket, A.dipBuyer],
   ...[I.strikeZone, I.thetaCrunch, I.reitTycoon, I.leverageTightrope, I.unicornHunter, I.sharpeShooter, I.washSale, I.safeWithdrawal],
 ];
