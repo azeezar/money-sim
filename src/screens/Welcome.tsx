@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Backup } from '../components/Backup';
 import { Logo } from '../components/Logo';
+import { Mascot } from '../components/Mascot';
 import { resetStore, useStore } from '../state/store';
 
 /**
@@ -27,6 +28,8 @@ export function Welcome({ onEnter }: { onEnter: () => void }) {
             <span>📈 Virtual portfolio and trading</span>
           </div>
         </div>
+
+        <PeekBuddy />
 
         <div className="welcome-act">
           {step === 'home' && (
@@ -74,6 +77,26 @@ export function Welcome({ onEnter }: { onEnter: () => void }) {
           )}
           <p className="muted small center">All money in Money Sim is virtual. Education, not financial advice.</p>
         </div>
+      </div>
+    </div>
+  );
+}
+
+/** The mascot peeks in from the side, ducks back, jumps out and waves hello. */
+function PeekBuddy() {
+  const s = useStore();
+  const still = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const [waving, setWaving] = useState(still);
+  useEffect(() => {
+    if (still) return;
+    const t = setTimeout(() => setWaving(true), 2300);
+    return () => clearTimeout(t);
+  }, [still]);
+  return (
+    <div className="welcome-buddy" aria-hidden="true">
+      <div className={'wb-move' + (still ? ' still' : '')}>
+        <span className={'wb-hi' + (waving ? ' on' : '')}>{s.onboarded && s.name ? `Hi, ${s.name}!` : 'Hi there!'}</span>
+        <Mascot id={s.mascot} size={96} mood={waving ? 'happy' : undefined} />
       </div>
     </div>
   );

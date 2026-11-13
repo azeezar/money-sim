@@ -687,3 +687,23 @@ body { overflow-x: clip; } /* clip, not hidden: hidden would break the sticky he
 .mx-say { text-align: center; margin: 0; }
 .native body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 .native :is(input, textarea, [contenteditable]) { -webkit-user-select: text; user-select: text; }
+.gameready { display: flex; flex-direction: column; gap: 2px; text-align: center; background: var(--coin-soft); border: 2px solid var(--coin); border-radius: 14px; padding: 12px; }
+[data-look='classic'] .gameready { border-width: 1px; border-radius: 10px; }
+
+/* Welcome: the mascot peeks from the right edge, ducks, then jumps out to the middle and waves. */
+.welcome { overflow-x: hidden; }
+.welcome-buddy { position: relative; height: 150px; margin: -10px -20px -34px; overflow: hidden; flex: none; }
+.wb-move { position: absolute; bottom: 0; left: calc(50% - 48px); width: 96px; display: flex; flex-direction: column; align-items: center; animation: wb-peek 2.3s ease-in-out both; }
+.wb-move.still { animation: none; }
+.wb-hi { background: var(--surface); color: var(--ink); font-weight: 800; font-size: 0.9rem; padding: 4px 12px; border-radius: 12px; margin-bottom: 4px; white-space: nowrap; opacity: 0; transform: translateY(6px) scale(0.8); transition: opacity 0.25s, transform 0.25s; }
+.wb-hi.on { opacity: 1; transform: none; }
+@keyframes wb-peek {
+  0% { left: 100%; transform: rotate(-14deg); }
+  16% { left: calc(100% - 52px); transform: rotate(-14deg); }
+  26% { left: calc(100% - 44px); transform: rotate(-6deg); }
+  36% { left: calc(100% - 52px); transform: rotate(-14deg); }
+  46% { left: calc(100% - 30px); transform: translateY(8px) rotate(0); }
+  70% { left: calc(50% + 10px); transform: translateY(-40px) rotate(-10deg); }
+  86% { left: calc(50% - 48px); transform: scale(1.08, 0.9); }
+  100% { left: calc(50% - 48px); transform: none; }
+}

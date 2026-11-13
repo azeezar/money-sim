@@ -4,6 +4,8 @@ import type { MascotId } from '../state/types';
 import { findLesson, teachFirst, type Step } from '../data/lessons';
 import { planCtx } from '../lib/plan';
 import { MECHS } from '../mechs';
+import { ARCADE } from '../games/arcade';
+import { toast } from '../ui/toast';
 import { HEART_REFILL_COST } from '../lib/config';
 import { shuffle } from '../lib/format';
 import { finishLesson, loseHeart, refillHearts } from '../state/actions';
@@ -37,7 +39,7 @@ function prep(st: Step): Ui {
   return { sel: null, ord: [], fb: null, m: null };
 }
 
-export function LessonScreen({ id, onClose, onGames }: { id: string; onClose: () => void; onGames: () => void }) {
+export function LessonScreen({ id, onClose, onGames, onPlay }: { id: string; onClose: () => void; onGames: () => void; onPlay: () => void }) {
   const s = useStore();
   const found = findLesson(id)!;
   const replay = useRef(!!s.done[id]).current;
@@ -67,6 +69,8 @@ export function LessonScreen({ id, onClose, onGames }: { id: string; onClose: ()
   function goTo(n: number, list = steps) {
     if (n >= list.length) {
       setEnd(finishLesson(id, mistakes, replay));
+      const a = found.lesson.arcade;
+      if (!replay && a && ARCADE[a.id]) toast(`🎮 ${a.name} is ready to play on the Games tab`);
       return setPhase('end');
     }
     setI(n);
@@ -150,6 +154,7 @@ export function LessonScreen({ id, onClose, onGames }: { id: string; onClose: ()
     </div>
   );
 
+  const arcade = found.lesson.arcade && ARCADE[found.lesson.arcade.id] ? found.lesson.arcade : null;
   if (phase === 'end' && end) {
     return (
       <div className="over">
@@ -165,7 +170,19 @@ export function LessonScreen({ id, onClose, onGames }: { id: string; onClose: ()
             </div>
             <p className="muted small">XP counts towards your next tier and can be moved into a minigame.</p>
           </div>
-          <button className="btn wide" onClick={onClose}>
+          {arcade && (
+            <div className="gameready">
+              <span className="tag">Practise what you learned</span>
+              <b>🎮 {arcade.name}</b>
+              <span className="muted small">{arcade.desc}</span>
+            </div>
+          )}
+          {arcade && (
+            <button className="btn coin wide" onClick={onPlay}>
+              Play {arcade.name}
+            </button>
+          )}
+          <button className={'btn wide' + (arcade ? ' ghost' : '')} onClick={onClose}>
             Continue
           </button>
         </div>

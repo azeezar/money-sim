@@ -61,7 +61,7 @@ npm run build:all    # both production builds
 | **XP wallet** | Every XP earned also lands here | Moved into minigames to level them up |
 | **Stars** | Minigame plays, quests | Refill hearts in lessons |
 
-Tier unlocks: Novice 0, Intermediate 60, Advanced 150, Investor 270 XP (the Investor tier also opens the trading simulator). Minigame level costs: 20, 40, 60, 80, 100 XP (300 for max). Budget month: 5 XP for closing, 40 more for hitting the goal, 20 more for saving 20% over it.
+Tier unlocks: Novice 0, Intermediate 60, Advanced 180, Investor 330 XP (the Investor tier also opens the trading simulator). Minigame level costs: 20, 40, 60, 80, 100 XP (300 for max). Budget month: 5 XP for closing, 40 more for hitting the goal, 20 more for saving 20% over it.
 
 All the numbers live in `src/lib/config.ts`.
 

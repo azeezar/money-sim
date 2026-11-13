@@ -21,8 +21,8 @@ export interface Tier {
 export const LADDER: Tier[] = [
   { id: 'novice', name: 'Novice', at: 0, blurb: 'Financial Foundations: income and leaks, budgeting, saving, debt and your first steps to investing.' },
   { id: 'intermediate', name: 'Intermediate', at: 60, blurb: 'Core Investor: shares, bonds, index funds, fees, asset allocation, tax wrappers and discipline.' },
-  { id: 'advanced', name: 'Advanced', at: 150, blurb: 'Market Analyst: financial statements, valuation, central banks, market cycles and behavioural finance.' },
-  { id: 'investor', name: 'Investor', at: 270, blurb: 'Sophisticated Strategist: options, real estate, private markets, correlation and tax-loss harvesting. Unlocks the trading simulator.' },
+  { id: 'advanced', name: 'Advanced', at: 180, blurb: 'Market Analyst: financial statements, valuation, central banks, market cycles and behavioural finance.' },
+  { id: 'investor', name: 'Investor', at: 330, blurb: 'Sophisticated Strategist: options, real estate, private markets, correlation and tax-loss harvesting. Unlocks the trading simulator.' },
 ];
 
 /** The fifth tier is separate from the ladder: always open, built from the user's own numbers. */
@@ -36,7 +36,7 @@ export const PLAN_TIER: Tier = {
 export const ALL_TIERS: Tier[] = [...LADDER, PLAN_TIER];
 
 /** XP head start from the starting quiz's "how much do you know" answer. Lifetime XP only, not wallet. */
-export const PLACEMENT: Record<string, number> = { new: 0, some: 60, good: 150 };
+export const PLACEMENT: Record<string, number> = { new: 0, some: 60, good: 180 };
 
 /** XP to move into a minigame to take it from level n to n+1. Everything starts at level 0. */
 export const LEVEL_COSTS = [20, 40, 60, 80, 100];

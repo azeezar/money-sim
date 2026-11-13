@@ -94,7 +94,10 @@ export default function App() {
     }
   }, [s]);
 
+  // A lesson whose arcade game the Games screen should open straight away.
+  const [startGame, setStartGame] = useState<string | null>(null);
   const go = (v: View) => {
+    setStartGame(null);
     if (location.hash.slice(1) !== v) location.hash = v;
     setView(v);
     scrollTo(0, 0);
@@ -143,6 +146,11 @@ export default function App() {
           onGames={() => {
             setLesson(null);
             go('games');
+          }}
+          onPlay={() => {
+            setLesson(null);
+            go('games');
+            setStartGame(lesson);
           }}
         />
         <Toasts />
@@ -215,7 +223,7 @@ export default function App() {
               {view === 'mascot' && <MyMascot />}
               {view === 'portfolio' && <Portfolio />}
               {view === 'trade' && isAdult(s) && <Trade onLearn={() => go('learn')} />}
-              {view === 'games' && <Games />}
+              {view === 'games' && <Games key={startGame ?? 'list'} start={startGame} />}
               {view === 'profile' && <Profile onRetake={() => setRetake(true)} go={go} />}
               {view === 'admin' && ADMIN && <Admin />}
             </div>

@@ -148,19 +148,110 @@ function Mouth({ y, mood, robot }: { y: number; mood?: Mood; robot: boolean }) {
   return <path d={`M28 ${y}q2 2.5 4 0q2 2.5 4 0`} fill="none" {...LINE} strokeWidth={2} />;
 }
 
+const B = { stroke: OUT, strokeWidth: 1.6, strokeLinejoin: 'round' as const, strokeLinecap: 'round' as const };
+
+/**
+ * Full-body layout. The head art above is drawn on the 64×64 grid, then shrunk into the top of the frame
+ * (`head`) so a torso, legs and tail fit underneath. Wardrobe items use the same head transform.
+ * The penguin is already a whole body, so its art is only shrunk to match the others, with no extra torso.
+ */
+interface Frame {
+  head: { s: number; x: number; y: number };
+  torso: ReactNode;
+  /** Shoulder half-width and height, in frame coordinates. */
+  sh: [number, number];
+  /** Arm thickness multiplier. */
+  k: number;
+}
+const H = { s: 0.56, x: 14, y: 0 };
+const foot = (c: string, rx = 5) => (
+  <>
+    <ellipse cx="25.5" cy="60.5" rx={rx} ry="3" fill={c} {...B} />
+    <ellipse cx="38.5" cy="60.5" rx={rx} ry="3" fill={c} {...B} />
+  </>
+);
+const FRAME: Record<MascotId, Frame> = {
+  cat: {
+    head: H, sh: [10, 40], k: 0.65,
+    torso: (
+      <>
+        <path d="M41 54q15 1 12-15" fill="none" stroke={OUT} strokeWidth="6" strokeLinecap="round" />
+        <path d="M41 54q15 1 12-15" fill="none" stroke="#e8920f" strokeWidth="3.4" strokeLinecap="round" />
+        {foot('#ffb81f')}
+        <ellipse cx="32" cy="47" rx="11.5" ry="12" fill="#ffb81f" {...B} />
+        <ellipse cx="32" cy="49" rx="6.5" ry="8" fill="#fff4e0" />
+      </>
+    ),
+  },
+  fox: {
+    head: H, sh: [10, 40], k: 0.65,
+    torso: (
+      <>
+        <path d="M41 53q17 3 13-15q-7 1-10 8z" fill="#f2762e" {...B} />
+        <circle cx="53.5" cy="39.5" r="3" fill="#fff4e8" {...B} />
+        {foot('#3a2420')}
+        <ellipse cx="32" cy="47" rx="11" ry="12" fill="#f2762e" {...B} />
+        <ellipse cx="32" cy="49" rx="6.5" ry="8.5" fill="#fff4e8" />
+      </>
+    ),
+  },
+  frog: {
+    head: H, sh: [11, 41], k: 0.65,
+    torso: (
+      <>
+        {foot('#46c28a', 7)}
+        <ellipse cx="32" cy="48" rx="13" ry="11" fill="#46c28a" {...B} />
+        <ellipse cx="32" cy="50" rx="8" ry="7" fill="#a8edc8" />
+        <circle cx="23" cy="45" r="1.4" fill="#2e9a6a" />
+      </>
+    ),
+  },
+  panda: {
+    head: H, sh: [10, 40], k: 0.65,
+    torso: (
+      <>
+        {foot('#2f2a3d', 5.5)}
+        <ellipse cx="32" cy="47" rx="12" ry="12" fill="#ffffff" {...B} />
+        <path d="M20.5 42q11.5-7 23 0v5q-11.5-6-23 0z" fill="#2f2a3d" />
+        <ellipse cx="32" cy="51" rx="5" ry="5.5" fill="#f1eef8" />
+      </>
+    ),
+  },
+  penguin: { head: { s: 0.82, x: 5.8, y: 11 }, sh: [15.5, 40.5], k: 0.82, torso: null },
+  robot: {
+    head: H, sh: [11, 40], k: 0.65,
+    torso: (
+      <>
+        <rect x="25.5" y="53" width="4" height="7" fill="#6f86ad" {...B} />
+        <rect x="34.5" y="53" width="4" height="7" fill="#6f86ad" {...B} />
+        <rect x="22.5" y="58.5" width="8" height="4" rx="2" fill="#9db4d8" {...B} />
+        <rect x="33.5" y="58.5" width="8" height="4" rx="2" fill="#9db4d8" {...B} />
+        <rect x="21" y="35" width="22" height="20" rx="5" fill="#9db4d8" {...B} />
+        <rect x="26.5" y="40" width="11" height="8" rx="2" fill="#1f2a44" />
+        <circle cx="29.5" cy="44" r="1.6" fill="#7fe8c0" />
+        <circle cx="34.5" cy="44" r="1.6" fill="#ffb81f" />
+      </>
+    ),
+  },
+};
+
 /** Arms and paws. Idle at the sides, thrown up when happy, hands to cheeks when sad. */
-function Hands({ a, r, mood }: { a: Anchor; r: Rig; mood?: Mood }) {
-  const [dx, sy] = r.sh;
+function Hands({ id, mood }: { id: MascotId; mood?: Mood }) {
+  const { head: h, sh, k } = FRAME[id];
+  const a = ANCHOR[id];
+  const r = RIG[id];
+  const [dx, sy] = sh;
   return (
     <>
       {[-1, 1].map((side) => {
         const sx = 32 + side * dx;
-        const [px, py] = mood === 'happy' ? [32 + side * (dx + 11), sy - 24] : mood === 'sad' ? [32 + side * (a.eyeDX + 8), a.eyeY + 11] : [32 + side * (dx + 4), sy + 7];
+        const cheek: [number, number] = [h.x + (32 + side * (a.eyeDX + 8)) * h.s, h.y + (a.eyeY + 11) * h.s];
+        const [px, py] = mood === 'happy' ? [32 + side * (dx + 10 * k + 1), sy - 22 * k - 2] : mood === 'sad' ? cheek : [32 + side * (dx + 5 * k), sy + 10 * k + 1];
         return (
           <g key={side} className={'hand ' + (side < 0 ? 'l' : 'r')}>
-            <path d={`M${sx} ${sy}L${px} ${py}`} stroke={OUT} strokeWidth="8.5" strokeLinecap="round" />
-            <path d={`M${sx} ${sy}L${px} ${py}`} stroke={r.arm} strokeWidth="5" strokeLinecap="round" />
-            <circle cx={px} cy={py} r="4.3" fill={r.paw} stroke={OUT} strokeWidth="2" />
+            <path d={`M${sx} ${sy}L${px} ${py}`} stroke={OUT} strokeWidth={8.5 * k} strokeLinecap="round" />
+            <path d={`M${sx} ${sy}L${px} ${py}`} stroke={r.arm} strokeWidth={5 * k} strokeLinecap="round" />
+            <circle cx={px} cy={py} r={4.3 * k} fill={r.paw} stroke={OUT} strokeWidth={2 * k} />
           </g>
         );
       })}
@@ -179,25 +270,30 @@ const Face = ({ id, mood }: { id: MascotId; mood?: Mood }) => {
 };
 
 /**
- * A mascot in the user's chosen look (or `look` when given), with its own idle animation.
+ * A full-body mascot in the user's chosen look (or `look` when given), with its own idle animation.
  * `mood` changes its face, arms and motion; `trick` plays its special move once; `still` stops the animation.
  */
 export function Mascot({ id, size = 56, look, trick, still, mood }: { id: MascotId; size?: number; look?: Look; trick?: boolean; still?: boolean; mood?: Mood }) {
   const s = useStore();
   const lk = look ?? s.look;
   const filter = item('color', lk.color)?.filter;
+  const { head: h, torso } = FRAME[id];
+  const at = `translate(${h.x} ${h.y}) scale(${h.s})`;
   const extras = (['neck', 'eyes', 'hat'] as const).map((slot) => <g key={slot}>{item(slot, lk[slot])?.draw?.(ANCHOR[id])}</g>);
   const m = mood ?? (trick ? 'happy' : undefined);
   return (
     <span className={`mascot m-${id}` + (trick ? ' trick' : '') + (still ? ' still' : '') + (mood ? ' ' + mood : '')} style={{ width: size, height: size }} aria-hidden="true">
       <svg width={size} height={size} viewBox="0 0 64 64" style={filter ? { filter } : undefined}>
-        {m !== 'sad' && <Hands a={ANCHOR[id]} r={RIG[id]} mood={m} />}
-        {BODY[id]}
-        <Face id={id} mood={m} />
-        {m === 'sad' && <Hands a={ANCHOR[id]} r={RIG[id]} mood={m} />}
+        {torso}
+        {m !== 'sad' && <Hands id={id} mood={m} />}
+        <g transform={at}>
+          {BODY[id]}
+          <Face id={id} mood={m} />
+        </g>
+        {m === 'sad' && <Hands id={id} mood={m} />}
       </svg>
       <svg width={size} height={size} viewBox="0 0 64 64">
-        {extras}
+        <g transform={at}>{extras}</g>
       </svg>
     </span>
   );

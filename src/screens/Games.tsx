@@ -54,10 +54,16 @@ function Pips({ level }: { level: number }) {
   );
 }
 
-export function Games() {
+export function Games({ start }: { start?: string | null }) {
   const s = useStore();
   const kid = !isAdult(s);
-  const [open, setOpen] = useState<Open | null>(null);
+  const [open, setOpen] = useState<Open | null>(() => {
+    for (const tier of LADDER) {
+      const lesson = LESSONS[tier.id].find((l) => l.id === start);
+      if (lesson?.arcade && ARCADE[lesson.arcade.id]) return { kind: 'arcade', lesson, tier: tier.id as LadderId };
+    }
+    return null;
+  });
   const levelled = (o: Open) => o.kind !== 'pairs' && o.kind !== 'quiz';
   const title = (o: Open) => (o.kind === 'arcade' ? o.lesson.arcade!.name : kid ? REVIEW[o.kind].kid : REVIEW[o.kind].name);
 
